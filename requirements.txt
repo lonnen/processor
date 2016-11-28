@@ -1,0 +1,6 @@
+configobj==5.0.6
+everett==0.6
+isodate==0.5.4
+py==1.4.31
+pytest==3.0.4
+six==1.10.0

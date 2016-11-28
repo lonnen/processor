@@ -1,0 +1,40 @@
+# docker-compose for processor development.
+#
+# Note: Requires docker 1.10.0+ and docker-compose 1.6.0+.
+version: "2"
+services:
+  # This builds an image of the deploy base. Then we extend that with
+  # dev-related things to do our dev-y stuff.
+  deploy-base:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: local/processor_deploy_base
+
+  # This builds an image that extends Dockerfile with dev-related things.
+  dev-base:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: local/processor_dev
+
+  # ------------------------------------------------------------------
+  # After this point is dev-related services.
+  # ------------------------------------------------------------------
+
+  # Base container is used for development tasks like tests, linting, coverage
+  # and building docs.
+  base:
+    image: local/processor_dev
+    volumes:
+      - .:/app
+
+  # Web container is a prod-like fully-functioning Processor container.
+  web:
+    extends:
+      service: base
+    environment:
+      - PROCESSOR_ENV=${PROCESSOR_ENV}
+    ports:
+      - "8000:8000"
+    command: ./bin/run_web.sh
