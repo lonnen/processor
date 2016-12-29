@@ -9,3 +9,6 @@ tests for them.
 At some point, we might want to lift one or more of these and put them
 in a library.
 """
+
+# constant used to represent an unused or throwaway variable
+_ = (0,)

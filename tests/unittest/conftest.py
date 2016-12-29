@@ -46,3 +46,37 @@ def randommock():
             yield
 
     return _randommock
+
+@pytest.fixture
+def loggingmock():
+    """Returns a loggingmock that builds a logging mock context to record logged records
+
+    Usage::
+
+        def test_something(loggingmock):
+            with loggingmock() as lm:
+                # do stuff
+                assert lm.has_record(
+                    name='foo.bar',
+                    level=logging.INFO,
+                    msg_contains='some substring'
+                )
+
+
+    You can specify names, too::
+
+        def test_something(loggingmock):
+            with loggingmock(['antenna', 'botocore']) as lm:
+                # do stuff
+                assert lm.has_record(
+                    name='foo.bar',
+                    level=logging.INFO,
+                    msg_contains='some substring'
+                )
+
+    """
+    @contextlib.contextmanager
+    def _loggingmock(names=None):
+        with LoggingMock(names=names) as loggingmock:
+            yield loggingmock
+    return _loggingmock
