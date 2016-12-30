@@ -69,14 +69,21 @@ class Crash:
         errors
         '''
         try:
-            rule(self.crash_id, self.raw_crash, self.dumps, self.processed_crash)
+            rule(self.crash_id, self.raw_crash, self.dumps,
+                self.processed_crash)
         except Exception as x:
-            # TODO logging here
+            logger.warning(
+                'Error while processing %s: %s',
+                self.crash_id,
+                str(x),
+                exc_info=True
+            )
             if not supress_errors:
                 raise
             self._errors.append(x)
 
         return self
+
 
     def pipeline(self, *args, supress_errors=False):
         '''sugar for applying multiple transformations
@@ -160,41 +167,3 @@ def put_crash_data(crash_id, raw_crash, dumps, processed_crash):
 
 def _reject(crash_id, reason):
     logger.warning("%s rejected: %s", crash_id, reason)
-
-
-def transform(self, raw_crash, dumps, processed_crash):
-    """business logic to modify dumps and raw crash into a final
-    processed crash form"""
-
-    try:
-
-        # apply transformations
-        #    step through each of the rule sets to apply the rules.
-        for a_rule_set_name, a_rule_set in self.rule_system.iteritems():
-            # for each rule set, invoke the 'act' method - this method
-            # will be the method specified in fourth element of the
-            # rule set configuration list.
-            a_rule_set.act(
-                raw_crash,
-                raw_dumps,
-                processed_crash,
-                processor_meta_data
-            )
-            quit_check()
-
-        # the crash made it through the processor rules with no exceptions
-        # raised, call it a success.
-        processed_crash.success = True
-
-    except Exception as x:
-        self.config.logger.warning(
-            'Error while processing %s: %s',
-            crash_id,
-            str(x),
-            exc_info=True
-        )
-        processor_meta_data.processor_notes.append(
-            'unrecoverable processor error: %s' % x
-        )
-
-    return raw_crash, dumps, processed_crash
