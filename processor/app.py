@@ -136,10 +136,74 @@ class Processor:
         # while True:
         try:
             Crash(crash_id).fetch().pipeline(
+                # initialize
                 UUIDCorrection(),
                 CreateMetadata(),
 
-                SaveMetadata(), # should always be the last rule
+                # rules to change the internals of the raw crash
+                #
+                # s.p.mozilla_transform_rules.ProductRewrite
+                # s.p.mozilla_transform_rules.ESRVersionRewrite
+                # s.p.mozilla_transform_rules.PluginContentURL
+                # s.p.mozilla_transform_rules.PluginUserComment
+                # s.p.mozilla_transform_rules.FennecBetaError20150430
+
+                # rules to transform a raw crash into a processed crash
+                #
+                # s.p.general_transform_rules.IdentifierRule
+                # s.p.breakpad_transform_rules.BreakpadStackwalkerRule2015
+                # s.p.mozilla_transform_rules.ProductRule
+                # s.p.mozilla_transform_rules.UserDataRule
+                # s.p.mozilla_transform_rules.EnvironmentRule
+                # s.p.mozilla_transform_rules.PluginRule
+                # s.p.mozilla_transform_rules.AddonsRule
+                # s.p.mozilla_transform_rules.DatesAndTimesRule
+                # s.p.mozilla_transform_rules.OutOfMemoryBinaryRule
+                # s.p.mozilla_transform_rules.JavaProcessRule
+                # s.p.mozilla_transform_rules.Winsock_LSPRule
+
+                # post processing of the processed crash
+                #
+                # s.p.breakpad_transform_rules.CrashingThreadRule
+                # s.p.general_transform_rules.CPUInfoRule
+                # s.p.general_transform_rules.OSInfoRule
+                # s.p.mozilla_transform_rules.BetaVersionRule
+                # s.p.mozilla_transform_rules.ExploitablityRule
+                # s.p.mozilla_transform_rules.FlashVersionRule
+                # s.p.mozilla_transform_rules.OSPrettyVersionRule
+                # s.p.mozilla_transform_rules.TopMostFilesRule
+                # s.p.mozilla_transform_rules.MissingSymbolsRule
+                # s.p.mozilla_transform_rules.ThemePrettyNameRule
+                # s.p.signature_utilities.SignatureGenerationRule
+                # s.p.signature_utilities.StackwalkerErrorSignatureRule
+                # s.p.signature_utilities.OOMSignature
+                # s.p.signature_utilities.AbortSignature
+                # s.p.signature_utilities.SignatureShutdownTimeout
+                # s.p.signature_utilities.SignatureRunWatchDog
+                # s.p.signature_utilities.SignatureIPCChannelError
+                # s.p.signature_utilities.SignatureIPCMessageName
+                # s.p.signature_utilities.SigTrunc
+
+                # a set of classfiers for support
+                # TODO: this was apply_until_action_succeeds
+                #
+                # s.p.support_classifiers.BitguardClassifier
+                # s.p.support_classifiers.OutOfDateClassifier
+
+                # a set of classifiers t help with jit crashes
+                #
+                # s.p.breakpad_transform_rules.JitCrashCategorizeRule
+                # s.p.signature_utilities.SignatureJitCategory
+
+                # a set of special request classifiers
+                # TODO: this was apply_until_action_succeeds
+                #
+                # s.p.skunk_classifiers.DontConsiderTheseFilter
+                # s.p.skunk_classifiers.SetWindowPos
+                # s.p.skunk_classifiers.NullClassification
+
+                # finalize
+                SaveMetadata(),
             ).save()
         finally:
             # TODO: clean up any temp files, dumps, etc
