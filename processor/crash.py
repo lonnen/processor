@@ -166,35 +166,7 @@ def transform(self, raw_crash, dumps, processed_crash):
     """business logic to modify dumps and raw crash into a final
     processed crash form"""
 
-
-    if "processor_notes" in processed_crash:
-        original_processor_notes = [
-            x.strip() for x in processed_crash.processor_notes.split(";")
-        ]
-        processor_meta_data.processor_notes.append(
-            "earlier processing: %s" % processed_crash.get(
-                "started_datetime",
-                'Unknown Date'
-            )
-        )
-    else:
-        original_processor_notes = []
-
-    processed_crash.success = False
-    processed_crash.started_datetime = utc_now()
-    # for backwards compatibility:
-    processed_crash.startedDateTime = processed_crash.started_datetime
-    processed_crash.signature = 'EMPTY: crash failed to process'
-
-    crash_id = raw_crash.get('uuid', 'unknown')
     try:
-        # quit_check calls ought to be scattered around the code to allow
-        # the processor to be responsive to requests to shut down.
-        # quit_check()
-
-        processor_meta_data.started_timestamp = self._log_job_start(
-            crash_id
-        )
 
         # apply transformations
         #    step through each of the rule sets to apply the rules.
@@ -224,21 +196,5 @@ def transform(self, raw_crash, dumps, processed_crash):
         processor_meta_data.processor_notes.append(
             'unrecoverable processor error: %s' % x
         )
-
-    # the processor notes are in the form of a list.  Join them all
-    # together to make a single string
-    processor_meta_data.processor_notes.extend(original_processor_notes)
-    processed_crash.processor_notes = '; '.join(
-        processor_meta_data.processor_notes
-    )
-    completed_datetime = utc_now()
-    processed_crash.completed_datetime = completed_datetime
-    # for backwards compatibility:
-    processed_crash.completeddatetime = completed_datetime
-
-    self._log_job_end(
-        processed_crash.success,
-        crash_id
-    )
 
     return raw_crash, dumps, processed_crash

@@ -2,11 +2,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-
-from tests.testlib import _
 import pytest
 
-from processor.rule import Identity, Introspector, Rule, UUIDCorrection
+from processor.rule import (CreateMetadata, Identity, Introspector, Rule,
+    SaveMetadata, UUIDCorrection)
+
+# test.testlib._ is a tuple but rules expect a dict-like interface for most args
+_ = {}
+
 
 class TestRule:
 
@@ -66,3 +69,52 @@ class TestUUIDCorrection:
         assert r.predicate(crash_id, raw_crash, _, _)
         r.action(crash_id, raw_crash, _, _)
         assert 'uuid' in raw_crash and raw_crash['uuid'] == crash_id
+
+class TestCreateMetadata:
+
+    def test_no_history(self):
+        processed_crash = {}
+        CreateMetadata()(_, _, _, processed_crash)
+        assert 'metadata' in processed_crash
+
+    def test_with_history(self):
+        processed_crash = {
+            'processor_notes': 'dwight; wilma'
+        }
+        CreateMetadata()(_, _, _, processed_crash)
+        metadata = processed_crash['metadata']
+        assert 'original_processor_notes' in metadata
+        assert (metadata['processor_notes'] ==
+            ['earlier processing: Unknown Date'])
+
+class TestSaveMetadata:
+
+    def test_no_history(self):
+        processed_crash = {
+            'metadata': {
+                'processor_notes': ['dwight', 'wilma'],
+            }
+        }
+
+        assert 'processor_notes' not in processed_crash
+        SaveMetadata()(_, _, _, processed_crash)
+        assert 'metadata' not in processed_crash
+        assert processed_crash.get('processor_notes') == 'dwight; wilma'
+
+    def test_with_history(self):
+        processed_crash = {
+            'metadata': {
+                'processor_notes': ['dwight', 'wilma'],
+                'original_processor_notes': [
+                    'Processor2015',
+                    'earlier processing: Unknown Date'
+                ]
+            }
+        }
+
+        SaveMetadata()(_, _, _, processed_crash)
+        assert 'metadata' not in processed_crash
+        assert (processed_crash.get('processor_notes') ==
+            'dwight; wilma; Processor2015; earlier processing: Unknown Date')
+        assert processed_crash.get('completed_datetime', None) #TODO: freezegun
+        assert processed_crash.get('success')

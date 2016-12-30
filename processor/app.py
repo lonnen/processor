@@ -137,6 +137,9 @@ class Processor:
         try:
             Crash(crash_id).fetch().pipeline(
                 UUIDCorrection(),
+                CreateMetadata(),
+
+                SaveMetadata(), # should always be the last rule
             ).save()
         finally:
             # TODO: clean up any temp files, dumps, etc
