@@ -16,6 +16,20 @@ logger = logging.getLogger(__name__)
 # s.p.mozilla_transform_rules.PluginUserComment
 # s.p.mozilla_transform_rules.FennecBetaError20150430
 
+class ESRVersionRewrite(Rule):
+    '''rewrites the version to denote esr builds where appropriate
+    '''
+
+    def predicate(self, crash_id, raw_crash, dumps, processed_crash):
+        return raw_crash.get('ReleaseChannel', '') == 'esr'
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        try:
+            raw_crash['Version'] += 'esr'
+        except KeyError:
+            raise KeyError(
+                '"Version" missing from esr release raw_crash')
+
 
 class ProductRule(Rule):
     '''transfers Product-related properties from the raw to the processed_crash,

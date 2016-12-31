@@ -10,7 +10,8 @@ import logging.config
 
 from processor.rule import UUIDCorrection, CreateMetadata, SaveMetadata
 from processor.rules.mozilla_transform_rules import (
-    ProductRule
+    ProductRewrite,
+    ProductRule,
 )
 
 from everett.component import ConfigOptions, RequiredConfigMixin
@@ -145,7 +146,7 @@ class Processor:
                 CreateMetadata(),
 
                 # rules to change the internals of the raw crash
-                # s.p.mozilla_transform_rules.ProductRewrite
+                ProductRewrite(),
                 # s.p.mozilla_transform_rules.ESRVersionRewrite
                 # s.p.mozilla_transform_rules.PluginContentURL
                 # s.p.mozilla_transform_rules.PluginUserComment
@@ -155,7 +156,7 @@ class Processor:
                 #
                 # s.p.general_transform_rules.IdentifierRule
                 # s.p.breakpad_transform_rules.BreakpadStackwalkerRule2015
-                # ProductRewrite(),
+                ProductRule(),
                 # s.p.mozilla_transform_rules.UserDataRule
                 # s.p.mozilla_transform_rules.EnvironmentRule
                 # s.p.mozilla_transform_rules.PluginRule
