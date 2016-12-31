@@ -12,6 +12,7 @@ from processor.rule import UUIDCorrection, CreateMetadata, SaveMetadata
 from processor.rules.mozilla_transform_rules import (
     ESRVersionRewrite,
     PluginContentURL,
+    PluginUserComment,
     ProductRewrite,
     ProductRule,
 )
@@ -151,7 +152,7 @@ class Processor:
                 ProductRewrite(),
                 ESRVersionRewrite(),
                 PluginContentURL(),
-                # s.p.mozilla_transform_rules.PluginUserComment
+                PluginUserComment(),
                 # s.p.mozilla_transform_rules.FennecBetaError20150430
 
                 # rules to transform a raw crash into a processed crash

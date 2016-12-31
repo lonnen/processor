@@ -7,8 +7,9 @@ import pytest
 from processor.rules.mozilla_transform_rules import (
     ESRVersionRewrite,
     PluginContentURL,
+    PluginUserComment,
     ProductRule,
-    ProductRewrite
+    ProductRewrite,
 )
 
 from tests.testlib import _
@@ -56,6 +57,24 @@ class TestPluginContentURL:
         PluginContentURL()(_, raw_crash, _, _)
 
         assert raw_crash['URL'] == 'http://google.com' # unchanged
+
+
+class TestPluginUserComment:
+
+    def test_everything_we_hoped_for(self, cannonical_raw_crash):
+        raw_crash = cannonical_raw_crash
+        raw_crash['PluginUserComment'] = 'I hate it when this happens'
+        raw_crash['Comments'] = 'I wrote something here, too'
+        PluginUserComment()(_, raw_crash, _, _)
+
+        assert raw_crash['Comments'] == 'I hate it when this happens'
+
+    def test_wrong_crash(self, cannonical_raw_crash):
+        raw_crash = cannonical_raw_crash
+        raw_crash['Comments'] = 'I wrote something here, too'
+        PluginUserComment()(_, raw_crash, _, _)
+
+        assert raw_crash['Comments'] == 'I wrote something here, too'
 
 
 class TestProductRewrite:

@@ -41,6 +41,15 @@ class PluginContentURL(Rule):
         raw_crash['URL'] = raw_crash['PluginContentURL']
 
 
+class PluginUserComment(Rule):
+
+    def predicate(self, crash_id, raw_crash, dumps, processed_crash):
+        return 'PluginUserComment' in raw_crash
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        raw_crash['Comments'] = raw_crash['PluginUserComment']
+
+
 class ProductRule(Rule):
     '''transfers Product-related properties from the raw to the processed_crash,
     filling in with empty defaults where it
