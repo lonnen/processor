@@ -153,7 +153,7 @@ class Processor:
                 ESRVersionRewrite(),
                 PluginContentURL(),
                 PluginUserComment(),
-                # s.p.mozilla_transform_rules.FennecBetaError20150430
+                FennecBetaError20150430(),
 
                 # rules to transform a raw crash into a processed crash
                 #

@@ -9,10 +9,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# rules to change the internals of the raw crash
-#
-# s.p.mozilla_transform_rules.PluginUserComment
-# s.p.mozilla_transform_rules.FennecBetaError20150430
 
 class ESRVersionRewrite(Rule):
     '''rewrites the version to denote esr builds where appropriate
@@ -29,6 +25,20 @@ class ESRVersionRewrite(Rule):
                 '"Version" missing from esr release raw_crash')
 
 
+class FennecBetaError20150430(Rule):
+    '''Correct the release channel for Fennec build 20150427090529
+    '''
+
+    def predicate(self, crash_id, raw_crash, dumps, processed_crash):
+        return (raw_crash['ProductName'].startswith('Fennec') and
+            raw_crash['BuildID'] == '20150427090529' and
+            raw_crash['ReleaseChannel'] == 'release')
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        raw_crash['ReleaseChannel'] = 'beta'
+        return True
+
+
 class PluginContentURL(Rule):
     '''overwrite 'URL' with 'PluginContentURL' if it exists
     '''
@@ -36,12 +46,13 @@ class PluginContentURL(Rule):
     def predicate(self, crash_id, raw_crash, dumps, processed_crash):
         return 'PluginContentURL' in raw_crash
 
-    #--------------------------------------------------------------------------
     def action(self, crash_id, raw_crash, dumps, processed_crash):
         raw_crash['URL'] = raw_crash['PluginContentURL']
 
 
 class PluginUserComment(Rule):
+    '''replace the top level 'Comment' with 'PluginUserComment' if it exists
+    '''
 
     def predicate(self, crash_id, raw_crash, dumps, processed_crash):
         return 'PluginUserComment' in raw_crash

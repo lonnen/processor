@@ -6,6 +6,7 @@ import pytest
 
 from processor.rules.mozilla_transform_rules import (
     ESRVersionRewrite,
+    FennecBetaError20150430,
     PluginContentURL,
     PluginUserComment,
     ProductRule,
