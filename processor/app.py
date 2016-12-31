@@ -8,6 +8,10 @@ from pathlib import Path
 import logging
 import logging.config
 
+from processor.rule import UUIDCorrection, CreateMetadata, SaveMetadata
+from processor.rules.mozilla_transform_rules import (
+    ProductRule
+)
 
 from everett.component import ConfigOptions, RequiredConfigMixin
 
@@ -142,7 +146,7 @@ class Processor:
 
                 # rules to change the internals of the raw crash
                 #
-                # s.p.mozilla_transform_rules.ProductRewrite
+                ProductRewrite(),
                 # s.p.mozilla_transform_rules.ESRVersionRewrite
                 # s.p.mozilla_transform_rules.PluginContentURL
                 # s.p.mozilla_transform_rules.PluginUserComment
