@@ -10,6 +10,8 @@ import logging.config
 
 from processor.rule import UUIDCorrection, CreateMetadata, SaveMetadata
 from processor.rules.mozilla_transform_rules import (
+    ESRVersionRewrite,
+    PluginContentURL,
     ProductRewrite,
     ProductRule,
 )
@@ -147,8 +149,8 @@ class Processor:
 
                 # rules to change the internals of the raw crash
                 ProductRewrite(),
-                # s.p.mozilla_transform_rules.ESRVersionRewrite
-                # s.p.mozilla_transform_rules.PluginContentURL
+                ESRVersionRewrite(),
+                PluginContentURL(),
                 # s.p.mozilla_transform_rules.PluginUserComment
                 # s.p.mozilla_transform_rules.FennecBetaError20150430
 

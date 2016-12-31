@@ -6,6 +6,7 @@ import pytest
 
 from processor.rules.mozilla_transform_rules import (
     ESRVersionRewrite,
+    PluginContentURL,
     ProductRule,
     ProductRewrite
 )
@@ -37,6 +38,24 @@ class TestESRVersionRewrite:
 
         assert (failure.value.args[0] ==
             '"Version" missing from esr release raw_crash')
+
+
+class TestPluginContentURL:
+
+    def test_everything_we_hoped_for(self, cannonical_raw_crash):
+        raw_crash = cannonical_raw_crash
+        raw_crash['PluginContentURL'] = 'http://mozilla.com'
+        raw_crash['URL'] = 'http://google.com'
+        PluginContentURL()(_, raw_crash, _, _)
+
+        assert raw_crash['URL'] == 'http://mozilla.com'
+
+    def test_wrong_crash(self, cannonical_raw_crash):
+        raw_crash = cannonical_raw_crash
+        raw_crash['URL'] = 'http://google.com'
+        PluginContentURL()(_, raw_crash, _, _)
+
+        assert raw_crash['URL'] == 'http://google.com' # unchanged
 
 
 class TestProductRewrite:

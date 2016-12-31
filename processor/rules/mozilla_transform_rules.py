@@ -11,8 +11,6 @@ logger = logging.getLogger(__name__)
 
 # rules to change the internals of the raw crash
 #
-# s.p.mozilla_transform_rules.ESRVersionRewrite
-# s.p.mozilla_transform_rules.PluginContentURL
 # s.p.mozilla_transform_rules.PluginUserComment
 # s.p.mozilla_transform_rules.FennecBetaError20150430
 
@@ -29,6 +27,18 @@ class ESRVersionRewrite(Rule):
         except KeyError:
             raise KeyError(
                 '"Version" missing from esr release raw_crash')
+
+
+class PluginContentURL(Rule):
+    '''overwrite 'URL' with 'PluginContentURL' if it exists
+    '''
+
+    def predicate(self, crash_id, raw_crash, dumps, processed_crash):
+        return 'PluginContentURL' in raw_crash
+
+    #--------------------------------------------------------------------------
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        raw_crash['URL'] = raw_crash['PluginContentURL']
 
 
 class ProductRule(Rule):
