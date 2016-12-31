@@ -82,7 +82,7 @@ def loggingmock():
     return _loggingmock
 
 @pytest.fixture
-def canonical_raw_crash():
+def cannonical_raw_crash():
     return {
         "uuid": '00000000-0000-0000-0000-000002140504',
         "InstallTime": "1335439892",

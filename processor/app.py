@@ -145,8 +145,7 @@ class Processor:
                 CreateMetadata(),
 
                 # rules to change the internals of the raw crash
-                #
-                ProductRewrite(),
+                # s.p.mozilla_transform_rules.ProductRewrite
                 # s.p.mozilla_transform_rules.ESRVersionRewrite
                 # s.p.mozilla_transform_rules.PluginContentURL
                 # s.p.mozilla_transform_rules.PluginUserComment
@@ -156,7 +155,7 @@ class Processor:
                 #
                 # s.p.general_transform_rules.IdentifierRule
                 # s.p.breakpad_transform_rules.BreakpadStackwalkerRule2015
-                # s.p.mozilla_transform_rules.ProductRule
+                # ProductRewrite(),
                 # s.p.mozilla_transform_rules.UserDataRule
                 # s.p.mozilla_transform_rules.EnvironmentRule
                 # s.p.mozilla_transform_rules.PluginRule
