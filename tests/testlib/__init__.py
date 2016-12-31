@@ -10,5 +10,7 @@ At some point, we might want to lift one or more of these and put them
 in a library.
 """
 
-# constant used to represent an unused or throwaway variable
-_ = (0,)
+# constants used to represent an unused or throwaway variable
+_tuple = (0,)
+_dict = {}
+_ = _tuple

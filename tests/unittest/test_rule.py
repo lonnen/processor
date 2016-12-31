@@ -7,8 +7,8 @@ import pytest
 from processor.rule import (CreateMetadata, Identity, Introspector, Rule,
     SaveMetadata, UUIDCorrection)
 
-# test.testlib._ is a tuple but rules expect a dict-like interface for most args
-_ = {}
+# rules expect a dict-like interface for most args
+from tests.testlib import _dict as _
 
 
 class TestRule:
