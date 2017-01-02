@@ -9,6 +9,9 @@ import logging
 import logging.config
 
 from processor.rule import UUIDCorrection, CreateMetadata, SaveMetadata
+from processor.rules.general_transform_rules import (
+    IdentifierRule,
+)
 from processor.rules.mozilla_transform_rules import (
     ESRVersionRewrite,
     PluginContentURL,
@@ -157,7 +160,7 @@ class Processor:
 
                 # rules to transform a raw crash into a processed crash
                 #
-                # s.p.general_transform_rules.IdentifierRule
+                IdentifierRule(),
                 # s.p.breakpad_transform_rules.BreakpadStackwalkerRule2015
                 ProductRule(),
                 # s.p.mozilla_transform_rules.UserDataRule

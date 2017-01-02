@@ -9,6 +9,16 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# rules to transform a raw crash into a processed crash
+#
+# s.p.mozilla_transform_rules.UserDataRule
+# s.p.mozilla_transform_rules.EnvironmentRule
+# s.p.mozilla_transform_rules.PluginRule
+# s.p.mozilla_transform_rules.AddonsRule
+# s.p.mozilla_transform_rules.DatesAndTimesRule
+# s.p.mozilla_transform_rules.OutOfMemoryBinaryRule
+# s.p.mozilla_transform_rules.JavaProcessRule
+# s.p.mozilla_transform_rules.Winsock_LSPRule
 
 class ESRVersionRewrite(Rule):
     '''rewrites the version to denote esr builds where appropriate
