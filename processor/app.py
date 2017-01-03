@@ -13,6 +13,7 @@ from processor.rules.general_transform_rules import (
     IdentifierRule,
 )
 from processor.rules.mozilla_transform_rules import (
+    EnvironmentRule,
     ESRVersionRewrite,
     PluginContentURL,
     PluginUserComment,
@@ -165,7 +166,7 @@ class Processor:
                 # s.p.breakpad_transform_rules.BreakpadStackwalkerRule2015
                 ProductRule(),
                 UserDataRule(),
-                # s.p.mozilla_transform_rules.EnvironmentRule
+                EnvironmentRule(),
                 # s.p.mozilla_transform_rules.PluginRule
                 # s.p.mozilla_transform_rules.AddonsRule
                 # s.p.mozilla_transform_rules.DatesAndTimesRule

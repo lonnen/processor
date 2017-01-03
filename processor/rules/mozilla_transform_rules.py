@@ -19,6 +19,14 @@ logger = logging.getLogger(__name__)
 # s.p.mozilla_transform_rules.JavaProcessRule
 # s.p.mozilla_transform_rules.Winsock_LSPRule
 
+class EnvironmentRule(Rule):
+    '''move the Notes from the raw_crash to the processed crash
+    '''
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        processed_crash['app_notes'] = raw_crash.get('Notes', '')
+
+
 class ESRVersionRewrite(Rule):
     '''rewrites the version to denote esr builds where appropriate
     '''
@@ -127,6 +135,7 @@ class ProductRewrite(Rule):
             new_product_name,
             product_id
         )
+
 
 class UserDataRule(Rule):
     '''copy user data from the raw crash to to the raw crash

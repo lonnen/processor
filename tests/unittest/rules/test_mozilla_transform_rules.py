@@ -5,6 +5,7 @@
 import pytest
 
 from processor.rules.mozilla_transform_rules import (
+    EnvironmentRule,
     ESRVersionRewrite,
     FennecBetaError20150430,
     PluginContentURL,
@@ -15,6 +16,23 @@ from processor.rules.mozilla_transform_rules import (
 )
 
 from tests.testlib import _
+
+
+class TestEnvironmentRule:
+
+    def test_everything_we_hoped_for(self, cannonical_raw_crash,
+        cannonical_processed_crash):
+
+        raw_crash = cannonical_raw_crash
+        processed_crash = cannonical_processed_crash
+
+        EnvironmentRule()(_, raw_crash, _, processed_crash)
+        assert (processed_crash['app_notes'] ==
+            "AdapterVendorID: 0x1002, AdapterDeviceID: 0x7280, "
+            "AdapterSubsysID: 01821043, "
+            "AdapterDriverVersion: 8.593.100.0\nD3D10 Layers? D3D10 "
+            "Layers- D3D9 Layers? D3D9 Layers- ")
+
 
 class TestESRVersionRewrite:
 
