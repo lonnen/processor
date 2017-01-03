@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 # rules to transform a raw crash into a processed crash
 #
-# s.p.mozilla_transform_rules.UserDataRule
 # s.p.mozilla_transform_rules.EnvironmentRule
 # s.p.mozilla_transform_rules.PluginRule
 # s.p.mozilla_transform_rules.AddonsRule
@@ -128,3 +127,14 @@ class ProductRewrite(Rule):
             new_product_name,
             product_id
         )
+
+class UserDataRule(Rule):
+    '''copy user data from the raw crash to to the raw crash
+    '''
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        processed_crash['url'] = raw_crash.get('URL', None)
+        processed_crash['user_comments'] = raw_crash.get('Comments', None)
+        processed_crash['email'] = raw_crash.get('Email', None)
+        #processed_crash['user_id'] = raw_crash.get('UserID', '')
+        processed_crash['user_id'] = ''

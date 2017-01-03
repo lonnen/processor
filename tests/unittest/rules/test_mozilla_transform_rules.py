@@ -11,6 +11,7 @@ from processor.rules.mozilla_transform_rules import (
     PluginUserComment,
     ProductRule,
     ProductRewrite,
+    UserDataRule
 )
 
 from tests.testlib import _
@@ -112,3 +113,19 @@ class TestProductRule:
         assert processed_crash['distributor_version'] == '12.0'
         assert processed_crash['release_channel'] == 'release'
         assert processed_crash['build'] == '20120420145725'
+
+class TestUserDataRule:
+
+    def test_everything_we_hoped_for(self, cannonical_raw_crash,
+        cannonical_processed_crash):
+
+        raw_crash = cannonical_raw_crash
+        processed_crash = cannonical_processed_crash
+
+        UserDataRule()(_, raw_crash, _, processed_crash)
+
+        assert processed_crash['url'] == 'http://www.mozilla.com'
+        assert (processed_crash['user_comments'] ==
+            'why did my browser crash?  #fail')
+        assert processed_crash['email'] == 'noreply@mozilla.com'
+        assert processed_crash['user_id'] == ''

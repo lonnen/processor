@@ -18,6 +18,7 @@ from processor.rules.mozilla_transform_rules import (
     PluginUserComment,
     ProductRewrite,
     ProductRule,
+    UserDataRule
 )
 
 from everett.component import ConfigOptions, RequiredConfigMixin
@@ -163,7 +164,7 @@ class Processor:
                 IdentifierRule(),
                 # s.p.breakpad_transform_rules.BreakpadStackwalkerRule2015
                 ProductRule(),
-                # s.p.mozilla_transform_rules.UserDataRule
+                UserDataRule(),
                 # s.p.mozilla_transform_rules.EnvironmentRule
                 # s.p.mozilla_transform_rules.PluginRule
                 # s.p.mozilla_transform_rules.AddonsRule
