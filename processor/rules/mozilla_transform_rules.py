@@ -11,8 +11,6 @@ logger = logging.getLogger(__name__)
 
 # rules to transform a raw crash into a processed crash
 #
-# s.p.mozilla_transform_rules.EnvironmentRule
-# s.p.mozilla_transform_rules.PluginRule
 # s.p.mozilla_transform_rules.AddonsRule
 # s.p.mozilla_transform_rules.DatesAndTimesRule
 # s.p.mozilla_transform_rules.OutOfMemoryBinaryRule
@@ -135,6 +133,34 @@ class ProductRewrite(Rule):
             new_product_name,
             product_id
         )
+
+
+class PluginRule(Rule):
+    '''Detects and notes hangs, sometimes hangs in in plugins
+    '''
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        processed_crash['hangid'] = raw_crash.get('HangID', None)
+
+        if raw_crash.get('PluginHang', False):
+            processed_crash['hangid'] = 'fake-' + raw_crash['uuid']
+
+
+        processed_crash['hang_type'] = 0 # normal crash, not a hang
+
+        if raw_crash.get('Hang'):
+            processed_crash['hang_type'] = 1 # browser hang
+        elif raw_crash.get('HangID') or processed_crash.get('hangid'):
+            processed_crash['hang_type'] = -1 # plugin hang
+
+        processed_crash['process_type'] = raw_crash.get('ProcessType', None)
+
+        if processed_crash.get('process_type') is not 'plugin':
+            return
+
+        processed_crash['PluginFilename'] = raw_crash.get('PluginFilename', '')
+        processed_crash['PluginName'] = raw_crash.get('PluginName', '')
+        processed_crash['PluginVersion'] = raw_crash.get('PluginVersion', '')
 
 
 class UserDataRule(Rule):

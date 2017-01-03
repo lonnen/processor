@@ -7,11 +7,11 @@ import pytest
 from processor.rules.mozilla_transform_rules import (
     EnvironmentRule,
     ESRVersionRewrite,
-    FennecBetaError20150430,
     PluginContentURL,
+    PluginRule,
     PluginUserComment,
-    ProductRule,
     ProductRewrite,
+    ProductRule,
     UserDataRule
 )
 
@@ -77,6 +77,64 @@ class TestPluginContentURL:
         PluginContentURL()(_, raw_crash, _, _)
 
         assert raw_crash['URL'] == 'http://google.com' # unchanged
+
+
+class TestPluginRule:
+
+    def test_plugin_hang(self, cannonical_raw_crash):
+        raw_crash = cannonical_raw_crash
+
+        raw_crash['PluginHang'] = 1
+        raw_crash['Hang'] = 0
+        raw_crash['ProcessType'] = 'plugin'
+        raw_crash['PluginFilename'] = 'x.exe'
+        raw_crash['PluginName'] = 'X'
+        raw_crash['PluginVersion'] = '0.0'
+
+        processed_crash = {}
+
+        PluginRule()(_, raw_crash, _, processed_crash)
+
+        assert (processed_crash['hangid'] ==
+            'fake-00000000-0000-0000-0000-000002140504')
+        assert processed_crash['hang_type'] == -1
+        assert processed_crash['process_type'] == 'plugin'
+        assert processed_crash['PluginFilename'] == 'x.exe'
+        assert processed_crash['PluginName'] == 'X'
+        assert processed_crash['PluginVersion'] == '0.0'
+
+
+
+    def test_browser_hang(self, cannonical_raw_crash):
+        raw_crash = cannonical_raw_crash
+
+        raw_crash['Hang'] = 1
+        raw_crash['ProcessType'] = 'browser'
+
+        processed_crash = {}
+
+        PluginRule()(_, raw_crash, _, processed_crash)
+
+        assert processed_crash['hangid'] == None
+        assert processed_crash['hang_type'] == 1
+        assert processed_crash['process_type'] == 'browser'
+        assert 'PluginFilename' not in processed_crash
+        assert 'PluginName' not in processed_crash
+        assert 'PluginVersion' not in processed_crash
+
+
+    def test_normal_crash(self, cannonical_raw_crash):
+        raw_crash = cannonical_raw_crash
+
+        processed_crash = {}
+
+        PluginRule()(_, raw_crash, _, processed_crash)
+
+        assert processed_crash['hangid'] == None
+        assert processed_crash['hang_type'] == 0
+        assert 'PluginFilename' not in processed_crash
+        assert 'PluginName' not in processed_crash
+        assert 'PluginVersion' not in processed_crash
 
 
 class TestPluginUserComment:

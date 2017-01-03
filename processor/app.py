@@ -16,6 +16,7 @@ from processor.rules.mozilla_transform_rules import (
     EnvironmentRule,
     ESRVersionRewrite,
     PluginContentURL,
+    PluginRule,
     PluginUserComment,
     ProductRewrite,
     ProductRule,
@@ -167,7 +168,7 @@ class Processor:
                 ProductRule(),
                 UserDataRule(),
                 EnvironmentRule(),
-                # s.p.mozilla_transform_rules.PluginRule
+                PluginRule(),
                 # s.p.mozilla_transform_rules.AddonsRule
                 # s.p.mozilla_transform_rules.DatesAndTimesRule
                 # s.p.mozilla_transform_rules.OutOfMemoryBinaryRule
