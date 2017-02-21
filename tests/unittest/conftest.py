@@ -82,7 +82,7 @@ def loggingmock():
     return _loggingmock
 
 @pytest.fixture
-def cannonical_raw_crash():
+def raw_crash():
     return {
         "uuid": '00000000-0000-0000-0000-000002140504',
         "InstallTime": "1335439892",
@@ -155,7 +155,7 @@ def cannonical_raw_crash():
     }
 
 @pytest.fixture
-def cannonical_processed_crash():
+def processed_crash():
     return {
         'metadata': {
             'processor_notes': []

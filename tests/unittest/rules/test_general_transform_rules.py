@@ -12,8 +12,7 @@ from tests.testlib import _
 
 class TestIdentifierRule:
 
-    def test_everything_we_hoped_for(self, cannonical_raw_crash):
-        raw_crash = cannonical_raw_crash
+    def test_everything_we_hoped_for(self, raw_crash):
         processed_crash = {}
 
         IdentifierRule()(_, raw_crash, _, processed_crash)

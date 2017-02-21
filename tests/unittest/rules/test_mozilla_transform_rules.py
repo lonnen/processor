@@ -21,12 +21,7 @@ from tests.testlib import _
 
 class TestAddonsRule:
 
-    def test_action_nothing_exppected(self, cannonical_raw_crash,
-        cannonical_processed_crash):
-
-        raw_crash = cannonical_raw_crash
-        processed_crash = cannonical_processed_crash
-
+    def test_action_nothing_exppected(self, raw_crash, processed_crash):
         AddonsRule()(_, raw_crash, _, processed_crash)
         assert (processed_crash['addons'] == [
             ('adblockpopups@jessehakanen.net', '0.3'),
@@ -43,12 +38,8 @@ class TestAddonsRule:
         ])
         assert processed_crash['addons_checked']
 
-    def test_action_colon_in_addon_version(self, cannonical_raw_crash,
-        cannonical_processed_crash):
 
-        raw_crash = cannonical_raw_crash
-        processed_crash = cannonical_processed_crash
-
+    def test_action_colon_in_addon_version(self, raw_crash, processed_crash):
         raw_crash['Add-ons'] = 'adblockpopups@jessehakanen.net:0:3:1'
         raw_crash['EMCheckCompatibility'] = 'Nope'
 
@@ -59,12 +50,8 @@ class TestAddonsRule:
         ])
         assert not processed_crash['addons_checked']
 
-    def test_action_addon_is_nonsense(self, cannonical_raw_crash,
-        cannonical_processed_crash):
 
-        raw_crash = cannonical_raw_crash
-        processed_crash = cannonical_processed_crash
-
+    def test_action_addon_is_nonsense(self, raw_crash, processed_crash):
         raw_crash['Add-ons'] = 'naoenut813teq;mz;<[`19ntaotannn8999anxse `'
 
         AddonsRule()(_, raw_crash, _, processed_crash)
@@ -75,15 +62,9 @@ class TestAddonsRule:
         assert processed_crash['addons_checked']
 
 
-
 class TestEnvironmentRule:
 
-    def test_everything_we_hoped_for(self, cannonical_raw_crash,
-        cannonical_processed_crash):
-
-        raw_crash = cannonical_raw_crash
-        processed_crash = cannonical_processed_crash
-
+    def test_everything_we_hoped_for(self, raw_crash, processed_crash):
         EnvironmentRule()(_, raw_crash, _, processed_crash)
         assert (processed_crash['app_notes'] ==
             "AdapterVendorID: 0x1002, AdapterDeviceID: 0x7280, "
@@ -94,21 +75,20 @@ class TestEnvironmentRule:
 
 class TestESRVersionRewrite:
 
-    def test_everything_we_hoped_for(self, cannonical_raw_crash):
-        raw_crash = cannonical_raw_crash
+    def test_everything_we_hoped_for(self, raw_crash):
         raw_crash['ReleaseChannel'] = 'esr'
         ESRVersionRewrite()(_, raw_crash, _, _)
 
         assert raw_crash['Version'] == '12.0esr'
 
-    def test_wrong_crash(self, cannonical_raw_crash):
-        raw_crash = cannonical_raw_crash
+
+    def test_wrong_crash(self, raw_crash):
         ESRVersionRewrite()(_, raw_crash, _, _)
 
         assert raw_crash['Version'] == '12.0' # unchanged
 
-    def test_this_is_really_broken(self, cannonical_raw_crash):
-        raw_crash = cannonical_raw_crash
+
+    def test_this_is_really_broken(self, raw_crash):
         raw_crash['ReleaseChannel'] = 'esr'
         del raw_crash['Version']
 
@@ -121,16 +101,15 @@ class TestESRVersionRewrite:
 
 class TestPluginContentURL:
 
-    def test_everything_we_hoped_for(self, cannonical_raw_crash):
-        raw_crash = cannonical_raw_crash
+    def test_everything_we_hoped_for(self, raw_crash):
         raw_crash['PluginContentURL'] = 'http://mozilla.com'
         raw_crash['URL'] = 'http://google.com'
         PluginContentURL()(_, raw_crash, _, _)
 
         assert raw_crash['URL'] == 'http://mozilla.com'
 
-    def test_wrong_crash(self, cannonical_raw_crash):
-        raw_crash = cannonical_raw_crash
+
+    def test_wrong_crash(self, raw_crash):
         raw_crash['URL'] = 'http://google.com'
         PluginContentURL()(_, raw_crash, _, _)
 
@@ -139,9 +118,7 @@ class TestPluginContentURL:
 
 class TestPluginRule:
 
-    def test_plugin_hang(self, cannonical_raw_crash):
-        raw_crash = cannonical_raw_crash
-
+    def test_plugin_hang(self, raw_crash):
         raw_crash['PluginHang'] = 1
         raw_crash['Hang'] = 0
         raw_crash['ProcessType'] = 'plugin'
@@ -162,10 +139,7 @@ class TestPluginRule:
         assert processed_crash['PluginVersion'] == '0.0'
 
 
-
-    def test_browser_hang(self, cannonical_raw_crash):
-        raw_crash = cannonical_raw_crash
-
+    def test_browser_hang(self, raw_crash):
         raw_crash['Hang'] = 1
         raw_crash['ProcessType'] = 'browser'
 
@@ -181,9 +155,7 @@ class TestPluginRule:
         assert 'PluginVersion' not in processed_crash
 
 
-    def test_normal_crash(self, cannonical_raw_crash):
-        raw_crash = cannonical_raw_crash
-
+    def test_normal_crash(self, raw_crash):
         processed_crash = {}
 
         PluginRule()(_, raw_crash, _, processed_crash)
@@ -197,16 +169,15 @@ class TestPluginRule:
 
 class TestPluginUserComment:
 
-    def test_everything_we_hoped_for(self, cannonical_raw_crash):
-        raw_crash = cannonical_raw_crash
+    def test_everything_we_hoped_for(self, raw_crash):
         raw_crash['PluginUserComment'] = 'I hate it when this happens'
         raw_crash['Comments'] = 'I wrote something here, too'
         PluginUserComment()(_, raw_crash, _, _)
 
         assert raw_crash['Comments'] == 'I hate it when this happens'
 
-    def test_wrong_crash(self, cannonical_raw_crash):
-        raw_crash = cannonical_raw_crash
+
+    def test_wrong_crash(self, raw_crash):
         raw_crash['Comments'] = 'I wrote something here, too'
         PluginUserComment()(_, raw_crash, _, _)
 
@@ -215,14 +186,12 @@ class TestPluginUserComment:
 
 class TestProductRewrite:
 
-    def test_everything_we_hoped_for(self, cannonical_raw_crash):
-        raw_crash = cannonical_raw_crash
+    def test_everything_we_hoped_for(self, raw_crash):
         ProductRewrite()(_, raw_crash, _, _)
 
         assert raw_crash['ProductName'] == 'FennecAndroid'
 
-    def test_wrong_crash(self, cannonical_raw_crash):
-        raw_crash = cannonical_raw_crash
+    def test_wrong_crash(self, raw_crash):
         raw_crash['ProductID'] = 'arbitrary-garbage-from-the-network'
         ProductRewrite()(_, raw_crash, _, _)
 
@@ -231,12 +200,7 @@ class TestProductRewrite:
 
 class TestProductRule:
 
-    def test_everything_we_hoped_for(self, cannonical_raw_crash,
-        cannonical_processed_crash):
-
-        raw_crash = cannonical_raw_crash
-        processed_crash = cannonical_processed_crash
-
+    def test_everything_we_hoped_for(self, raw_crash, processed_crash):
         ProductRule()(_, raw_crash, _, processed_crash)
 
         assert processed_crash['product'] == 'Firefox'
@@ -248,14 +212,10 @@ class TestProductRule:
         assert processed_crash['release_channel'] == 'release'
         assert processed_crash['build'] == '20120420145725'
 
+
 class TestUserDataRule:
 
-    def test_everything_we_hoped_for(self, cannonical_raw_crash,
-        cannonical_processed_crash):
-
-        raw_crash = cannonical_raw_crash
-        processed_crash = cannonical_processed_crash
-
+    def test_everything_we_hoped_for(self, raw_crash, processed_crash):
         UserDataRule()(_, raw_crash, _, processed_crash)
 
         assert processed_crash['url'] == 'http://www.mozilla.com'
