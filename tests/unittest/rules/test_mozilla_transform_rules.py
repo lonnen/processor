@@ -5,6 +5,7 @@
 import pytest
 
 from processor.rules.mozilla_transform_rules import (
+    AddonsRule,
     EnvironmentRule,
     ESRVersionRewrite,
     PluginContentURL,
@@ -16,6 +17,63 @@ from processor.rules.mozilla_transform_rules import (
 )
 
 from tests.testlib import _
+
+
+class TestAddonsRule:
+
+    def test_action_nothing_exppected(self, cannonical_raw_crash,
+        cannonical_processed_crash):
+
+        raw_crash = cannonical_raw_crash
+        processed_crash = cannonical_processed_crash
+
+        AddonsRule()(_, raw_crash, _, processed_crash)
+        assert (processed_crash['addons'] == [
+            ('adblockpopups@jessehakanen.net', '0.3'),
+            ('dmpluginff@westbyte.com', '1,4.8'),
+            ('firebug@software.joehewitt.com', '1.9.1'),
+            ('killjasmin@pierros14.com', '2.4'),
+            ('support@surfanonymous-free.com', '1.0'),
+            ('uploader@adblockfilters.mozdev.org', '2.1'),
+            ('{a0d7ccb3-214d-498b-b4aa-0e8fda9a7bf7}', '20111107'),
+            ('{d10d0bf8-f5b5-c8b4-a8b2-2b9879e08c5d}', '2.0.3'),
+            ('anttoolbar@ant.com', '2.4.6.4'),
+            ('{972ce4c6-7e08-4474-a285-3208198ce6fd}', '12.0'),
+            ('elemhidehelper@adblockplus.org', '1.2.1')
+        ])
+        assert processed_crash['addons_checked']
+
+    def test_action_colon_in_addon_version(self, cannonical_raw_crash,
+        cannonical_processed_crash):
+
+        raw_crash = cannonical_raw_crash
+        processed_crash = cannonical_processed_crash
+
+        raw_crash['Add-ons'] = 'adblockpopups@jessehakanen.net:0:3:1'
+        raw_crash['EMCheckCompatibility'] = 'Nope'
+
+        AddonsRule()(_, raw_crash, _, processed_crash)
+
+        assert (processed_crash['addons'] == [
+            ('adblockpopups@jessehakanen.net', '0:3:1'),
+        ])
+        assert not processed_crash['addons_checked']
+
+    def test_action_addon_is_nonsense(self, cannonical_raw_crash,
+        cannonical_processed_crash):
+
+        raw_crash = cannonical_raw_crash
+        processed_crash = cannonical_processed_crash
+
+        raw_crash['Add-ons'] = 'naoenut813teq;mz;<[`19ntaotannn8999anxse `'
+
+        AddonsRule()(_, raw_crash, _, processed_crash)
+
+        assert (processed_crash['addons'] == [
+            ('naoenut813teq;mz;<[`19ntaotannn8999anxse `', ''),
+        ])
+        assert processed_crash['addons_checked']
+
 
 
 class TestEnvironmentRule:

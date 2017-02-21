@@ -157,6 +157,9 @@ def cannonical_raw_crash():
 @pytest.fixture
 def cannonical_processed_crash():
     return {
+        'metadata': {
+            'processor_notes': []
+        },
         'json_dump': {
             'sensitive': {
                 'exploitability': 'high'

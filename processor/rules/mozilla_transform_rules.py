@@ -5,6 +5,8 @@
 from processor.util import utc_now
 from processor.rule import Rule
 
+from urllib.parse import unquote_plus
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -16,6 +18,37 @@ logger = logging.getLogger(__name__)
 # s.p.mozilla_transform_rules.OutOfMemoryBinaryRule
 # s.p.mozilla_transform_rules.JavaProcessRule
 # s.p.mozilla_transform_rules.Winsock_LSPRule
+
+class AddonsRule(Rule):
+    '''transform add-on information into a useful form
+    '''
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        addons_checked = raw_crash.get('EMCheckCompatibility', '')
+        processed_crash['addons_checked'] = (addons_checked.lower() == 'true')
+
+        if processed_crash['addons_checked']:
+            addons_checked_txt = raw_crash['EMCheckCompatibility'].lower()
+
+        original_addon_str = raw_crash.get('Add-ons')
+        if not original_addon_str:
+            logger.debug('AddonsRule: no addons')
+            processed_crash['addons'] = []
+            return
+
+        addons = []
+        for addon_pair in original_addon_str.split(','):
+            addon_splits = addon_pair.split(':', 1)
+            if len(addon_splits) == 1:
+                processed_crash['metadata']['processor_notes'].append(
+                    'add-on "%s" is a bad name and/or version' %
+                    addon_pair
+                )
+                addon_splits.append('')
+            addons.append(tuple(unquote_plus(x) for x in addon_splits))
+
+        processed_crash['addons'] = addons
+
 
 class EnvironmentRule(Rule):
     '''move the Notes from the raw_crash to the processed crash

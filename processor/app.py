@@ -13,6 +13,7 @@ from processor.rules.general_transform_rules import (
     IdentifierRule,
 )
 from processor.rules.mozilla_transform_rules import (
+    AddonsRule,
     EnvironmentRule,
     ESRVersionRewrite,
     PluginContentURL,
@@ -169,7 +170,7 @@ class Processor:
                 UserDataRule(),
                 EnvironmentRule(),
                 PluginRule(),
-                # s.p.mozilla_transform_rules.AddonsRule
+                AddonsRule(),
                 # s.p.mozilla_transform_rules.DatesAndTimesRule
                 # s.p.mozilla_transform_rules.OutOfMemoryBinaryRule
                 # s.p.mozilla_transform_rules.JavaProcessRule
