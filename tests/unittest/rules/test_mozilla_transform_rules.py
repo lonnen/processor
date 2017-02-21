@@ -9,6 +9,7 @@ from processor.rules.mozilla_transform_rules import (
     DatesAndTimesRule,
     EnvironmentRule,
     ESRVersionRewrite,
+    OutOfMemoryBinaryRule,
     PluginContentURL,
     PluginRule,
     PluginUserComment,
@@ -262,6 +263,39 @@ class TestESRVersionRewrite:
 
         assert (failure.value.args[0] ==
             '"Version" missing from esr release raw_crash')
+
+
+class TestOutOfMemoryBinaryRule:
+
+    def test_extract_memory_info_with_json_trouble(self,
+        raw_crash, processed_crash):
+        pass
+
+
+    def test_extract_memory_info_with_trouble(self, raw_crash, processed_crash):
+        pass
+
+
+    def test_extract_memory_info_too_big(self, raw_crash, processed_crash):
+        pass
+
+
+    def test_extract_memory_info(self, raw_crash, processed_crash):
+        pass
+
+
+    def test_everything_we_hoped_for(self, raw_crash, processed_crash):
+        raw_crash['JavaStackTrace'] = "this is a Java Stack trace"
+        raw_dumps = {
+            'memory_report': 'a_pathname'
+        }
+
+        OutOfMemoryBinaryRule()(_, raw_crash, raw_dumps, processed_crash)
+
+
+    def test_this_is_not_the_crash_you_are_looking_for(self,
+        raw_crash, processed_crash):
+        pass
 
 
 class TestPluginContentURL:

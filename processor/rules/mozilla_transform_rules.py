@@ -10,6 +10,7 @@ from sys import maxsize
 
 
 from processor.util import dateFromOoid, datetimeFromISOdateString, utc_now
+from processor.util import temp_file_context
 from processor.rule import Rule
 
 from urllib.parse import unquote_plus
@@ -24,7 +25,6 @@ UTC = isodate.UTC
 
 # rules to transform a raw crash into a processed crash
 #
-# s.p.mozilla_transform_rules.OutOfMemoryBinaryRule
 # s.p.mozilla_transform_rules.JavaProcessRule
 # s.p.mozilla_transform_rules.Winsock_LSPRule
 
@@ -188,6 +188,60 @@ class FennecBetaError20150430(Rule):
     def action(self, crash_id, raw_crash, dumps, processed_crash):
         raw_crash['ReleaseChannel'] = 'beta'
         return True
+
+
+class OutOfMemoryBinaryRule(Rule):
+    '''Extract the JSON data from the .json.gz memory report file
+    '''
+
+    def predicate(self, crash_id, raw_crash, dumps, processed_crash):
+        return 'memory_report' in raw_dumps
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        MAX_SIZE_UNCOMPRESSED = 20 * 1024 * 1024,  # ~20 Mb
+        dump_pathname = raw_dumps.get('memory_report')
+
+        with temp_file_context(pathname):
+            processor_notes = processor['metadata']['processor_notes']
+
+            try:
+                fd = gzip_open(dump_pathname, "rb")
+            except IOError as x:
+                error_message = "error in gzip for %s: %r" % (dump_pathname, x)
+                processor_notes.append(error_message)
+                memory_report = {
+                    "ERROR": error_message
+                }
+            try:
+                memory_report_as_string = fd.read()
+                if len(memory_report_as_string) > MAX_SIZE_UNCOMPRESSED:
+                    error_message = (
+                        "Uncompressed memory info too large %d (max: %d)" % (
+                            len(memory_report_as_string),
+                            MAX_SIZE_UNCOMPRESSED,
+                        )
+                    )
+                    processor_notes.append(error_message)
+                    memory_report = {
+                        "ERROR": error_message
+                    }
+
+                memory_report = json_loads(memory_report_as_string)
+            except ValueError as x:
+                error_message = "error in json for %s: %r" % (dump_pathname, x)
+                processor_notes.append(error_message)
+                memory_report = {
+                    "ERROR": error_message
+                }
+            finally:
+                fd.close()
+
+            if isinstance(memory_report, dict) and memory_report.get('ERROR'):
+                processed_crash['memory_report_error'] = memory_report['ERROR']
+            else:
+                processed_crash['memory_report'] = memory_report
+
+        return
 
 
 class PluginContentURL(Rule):

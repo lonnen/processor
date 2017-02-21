@@ -7,15 +7,19 @@ from functools import wraps
 import gzip
 import io
 import json
+import logging
+import os
 import re
 import time
 import uuid as uu
 
-import isodate
+from contextlib import contextmanager
 
+import isodate
 
 UTC = isodate.UTC
 
+logger = logging.getLogger(__name__)
 
 defaultDepth = 2
 oldHardDepth = 4
@@ -195,6 +199,25 @@ def string_to_datetime(date):
                 parsed = parsed.replace(tzinfo=UTC)
             return parsed
     raise ValueError("date not a parsable string")
+
+
+@contextmanager
+def temp_file_context(raw_dump_path):
+    """this contextmanager implements conditionally deleting a pathname
+    at the end of a context if the pathname indicates that it is a temp
+    file by having the word 'TEMPORARY' embedded in it."""
+    try:
+        yield raw_dump_path
+    finally:
+        if 'TEMPORARY' in raw_dump_path:
+            try:
+                os.unlink(raw_dump_path)
+            except OSError:
+                logger.warning(
+                    'unable to delete %s. manual deletion is required.',
+                    raw_dump_path,
+                    exc_info=True
+                )
 
 
 def uuid_to_date(uuid, century='20'):
