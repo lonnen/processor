@@ -2,19 +2,28 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from processor.util import utc_now
+import datetime
+import logging
+import time
+
+from sys import maxsize
+
+
+from processor.util import dateFromOoid, datetimeFromISOdateString, utc_now
 from processor.rule import Rule
 
 from urllib.parse import unquote_plus
 
-import logging
+import isodate
+
 
 logger = logging.getLogger(__name__)
 
+UTC = isodate.UTC
+
+
 # rules to transform a raw crash into a processed crash
 #
-# s.p.mozilla_transform_rules.AddonsRule
-# s.p.mozilla_transform_rules.DatesAndTimesRule
 # s.p.mozilla_transform_rules.OutOfMemoryBinaryRule
 # s.p.mozilla_transform_rules.JavaProcessRule
 # s.p.mozilla_transform_rules.Winsock_LSPRule
@@ -48,6 +57,100 @@ class AddonsRule(Rule):
             addons.append(tuple(unquote_plus(x) for x in addon_splits))
 
         processed_crash['addons'] = addons
+
+
+class DatesAndTimesRule(Rule):
+    '''
+    '''
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        processor_notes = processed_crash['metadata']['processor_notes']
+
+        processed_crash['submitted_timestamp'] = raw_crash.get(
+            'submitted_timestamp',
+            dateFromOoid(raw_crash['uuid'])
+        )
+
+        if isinstance(processed_crash['submitted_timestamp'], str):
+            processed_crash['submitted_timestamp'] = datetimeFromISOdateString(
+                processed_crash['submitted_timestamp']
+            )
+
+        processed_crash['date_processed'] = processed_crash['submitted_timestamp']
+
+        # defaultCrashTime: must have crashed before date processed
+        submitted_timestamp_as_epoch = int(
+            time.mktime(processed_crash['submitted_timestamp'].timetuple())
+        )
+
+        try:
+            timestampTime = int(
+                raw_crash.get('timestamp', submitted_timestamp_as_epoch)
+            )  # the old name for crash time
+        except ValueError:
+            timestampTime = 0
+            processor_notes.append('non-integer value of "timestamp"')
+
+        try:
+            crash_time = int(raw_crash['CrashTime'][:10])
+        except (KeyError, AttributeError):
+            processor_notes.append(
+                "WARNING: raw_crash missing %s" % 'CrashTime')
+            crash_time = timestampTime
+        except TypeError as x:
+            processor_notes.append(
+                ("WARNING: raw_crash['CrashTime'] contains unexpected value: ",
+                    "%s; %s" % (raw_crash['CrashTime'], str(x)))
+            )
+            crash_time = timestampTime
+        except ValueError:
+            processor_notes.append(
+                'non-integer value of "CrashTime" (%s)' % raw_crash.CrashTime
+            )
+            crash_time = 0
+
+        processed_crash['crash_time'] = crash_time
+        if crash_time == submitted_timestamp_as_epoch:
+            processor_notes.append("client_crash_date is unknown")
+
+        # StartupTime: must have started up some time before crash
+        try:
+            startupTime = int(raw_crash.get('StartupTime', crash_time))
+        except ValueError:
+            startupTime = 0
+            processor_notes.append('non-integer value of "StartupTime"')
+
+        # InstallTime: must have installed some time before startup
+        try:
+            installTime = int(raw_crash.get('InstallTime', startupTime))
+        except ValueError:
+            installTime = 0
+            processor_notes.append('non-integer value of "InstallTime"')
+
+        processed_crash['client_crash_date'] = datetime.datetime.fromtimestamp(
+            crash_time,
+            UTC
+        )
+
+        processed_crash['install_age'] = crash_time - installTime
+        processed_crash['uptime'] = max(0, crash_time - startupTime)
+
+        try:
+            last_crash = int(raw_crash['SecondsSinceLastCrash'])
+        except (KeyError, TypeError, ValueError):
+            last_crash = None
+            processor_notes.append(
+                'non-integer value of "SecondsSinceLastCrash"'
+            )
+
+        if last_crash is not None and last_crash > maxsize:
+            last_crash = None
+            processor_notes.append(
+                '"SecondsSinceLastCrash" larger than MAXINT - set to NULL'
+            )
+        processed_crash['last_crash'] = last_crash
+
+        return True
 
 
 class EnvironmentRule(Rule):

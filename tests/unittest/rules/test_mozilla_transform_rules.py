@@ -6,6 +6,7 @@ import pytest
 
 from processor.rules.mozilla_transform_rules import (
     AddonsRule,
+    DatesAndTimesRule,
     EnvironmentRule,
     ESRVersionRewrite,
     PluginContentURL,
@@ -14,6 +15,9 @@ from processor.rules.mozilla_transform_rules import (
     ProductRewrite,
     ProductRule,
     UserDataRule
+)
+from processor.util import (
+    datetimeFromISOdateString
 )
 
 from tests.testlib import _
@@ -60,6 +64,167 @@ class TestAddonsRule:
             ('naoenut813teq;mz;<[`19ntaotannn8999anxse `', ''),
         ])
         assert processed_crash['addons_checked']
+
+
+class TestDatesAndTimesRule:
+
+    def test_everything_we_hoped_for(self, raw_crash, processed_crash):
+        DatesAndTimesRule()(_, raw_crash, _, processed_crash)
+
+        assert (processed_crash['submitted_timestamp'] ==
+            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+        assert (processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp'])
+        assert processed_crash['crash_time'] == 1336519554
+        assert (processed_crash['client_crash_date'] ==
+            datetimeFromISOdateString('2012-05-08 23:25:54+00:00'))
+        assert processed_crash['install_age'] == 1079662
+        assert processed_crash['uptime'] == 20116
+        assert processed_crash['last_crash'] == 86985
+
+    def test_bad_timestamp(self, raw_crash, processed_crash):
+        raw_crash['timestamp'] = 'hi there'
+
+        DatesAndTimesRule()(_, raw_crash, _, processed_crash)
+
+        assert (processed_crash['submitted_timestamp'] ==
+            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+        assert (processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp'])
+        assert processed_crash['crash_time'] == 1336519554
+        assert (processed_crash['client_crash_date'] ==
+            datetimeFromISOdateString('2012-05-08 23:25:54+00:00'))
+        assert processed_crash['install_age'] == 1079662
+        assert processed_crash['uptime'] == 20116
+        assert processed_crash['last_crash'] == 86985
+        assert (processed_crash['metadata']['processor_notes'] ==
+            ['non-integer value of "timestamp"'])
+
+    def test_bad_timestamp_and_no_crash_time(self, raw_crash, processed_crash):
+        raw_crash['timestamp'] = 'hi there'
+        del raw_crash['CrashTime']
+
+        DatesAndTimesRule()(_, raw_crash, _, processed_crash)
+
+        assert (processed_crash['submitted_timestamp'] ==
+            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+        assert (processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp'])
+        assert processed_crash['crash_time'] == 0
+        assert (processed_crash['client_crash_date'] ==
+            datetimeFromISOdateString('1970-01-01 00:00:00+00:00'))
+        assert processed_crash['install_age'] == -1335439892
+        assert processed_crash['uptime'] == 0
+        assert processed_crash['last_crash'] == 86985
+        assert (processed_crash['metadata']['processor_notes'] ==
+            [
+                'non-integer value of "timestamp"',
+                'WARNING: raw_crash missing CrashTime'
+            ])
+
+
+
+    def test_no_startup_time_bad_timestamp(self, raw_crash, processed_crash):
+        raw_crash['timestamp'] = 'hi there'
+        del raw_crash['StartupTime']
+
+        DatesAndTimesRule()(_, raw_crash, _, processed_crash)
+
+        assert (processed_crash['submitted_timestamp'] ==
+            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+        assert (processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp'])
+        assert processed_crash['crash_time'] == 1336519554
+        assert (processed_crash['client_crash_date'] ==
+            datetimeFromISOdateString('2012-05-08 23:25:54+00:00'))
+        assert processed_crash['install_age'] == 1079662
+        assert processed_crash['uptime'] == 0
+        assert processed_crash['last_crash'] == 86985
+        assert (processed_crash['metadata']['processor_notes'] ==
+            [
+                'non-integer value of "timestamp"',
+            ])
+
+
+    def test_no_startup_time(self, raw_crash, processed_crash):
+        del raw_crash['StartupTime']
+
+        DatesAndTimesRule()(_, raw_crash, _, processed_crash)
+
+        assert (processed_crash['submitted_timestamp'] ==
+            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+        assert (processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp'])
+        assert processed_crash['crash_time'] == 1336519554
+        assert (processed_crash['client_crash_date'] ==
+            datetimeFromISOdateString('2012-05-08 23:25:54+00:00'))
+        assert processed_crash['install_age'] == 1079662
+        assert processed_crash['uptime'] == 0
+        assert processed_crash['last_crash'] == 86985
+        assert (processed_crash['metadata']['processor_notes'] == [])
+
+
+    def test_bad_startup_time(self, raw_crash, processed_crash):
+        raw_crash['StartupTime'] = 'feed the goats'
+
+        DatesAndTimesRule()(_, raw_crash, _, processed_crash)
+
+        assert (processed_crash['submitted_timestamp'] ==
+            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+        assert (processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp'])
+        assert processed_crash['crash_time'] == 1336519554
+        assert (processed_crash['client_crash_date'] ==
+            datetimeFromISOdateString('2012-05-08 23:25:54+00:00'))
+        assert processed_crash['install_age'] == 1079662
+        assert processed_crash['uptime'] == 1336519554
+        assert processed_crash['last_crash'] == 86985
+        assert (processed_crash['metadata']['processor_notes'] ==
+            [
+                'non-integer value of "StartupTime"',
+            ])
+
+
+    def test_bad_install_time(self, raw_crash, processed_crash):
+        raw_crash['InstallTime'] = 'feed the goats'
+
+        DatesAndTimesRule()(_, raw_crash, _, processed_crash)
+
+        assert (processed_crash['submitted_timestamp'] ==
+            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+        assert (processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp'])
+        assert processed_crash['crash_time'] == 1336519554
+        assert (processed_crash['client_crash_date'] ==
+            datetimeFromISOdateString('2012-05-08 23:25:54+00:00'))
+        assert processed_crash['install_age'] == 1336519554
+        assert processed_crash['uptime'] == 20116
+        assert processed_crash['last_crash'] == 86985
+        assert (processed_crash['metadata']['processor_notes'] ==
+            [
+                'non-integer value of "InstallTime"',
+            ])
+
+
+    def test_bad_seconds_since_last_crash(self, raw_crash, processed_crash):
+        raw_crash['SecondsSinceLastCrash'] = 'feed the goats'
+
+        DatesAndTimesRule()(_, raw_crash, _, processed_crash)
+
+        assert (processed_crash['submitted_timestamp'] ==
+            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+        assert (processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp'])
+        assert processed_crash['crash_time'] == 1336519554
+        assert (processed_crash['client_crash_date'] ==
+            datetimeFromISOdateString('2012-05-08 23:25:54+00:00'))
+        assert processed_crash['install_age'] == 1079662
+        assert processed_crash['uptime'] == 20116
+        assert processed_crash['last_crash'] == None
+        assert (processed_crash['metadata']['processor_notes'] ==
+            [
+                'non-integer value of "SecondsSinceLastCrash"',
+            ])
 
 
 class TestEnvironmentRule:

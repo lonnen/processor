@@ -14,6 +14,7 @@ from processor.rules.general_transform_rules import (
 )
 from processor.rules.mozilla_transform_rules import (
     AddonsRule,
+    DatesAndTimesRule,
     EnvironmentRule,
     ESRVersionRewrite,
     PluginContentURL,
@@ -171,7 +172,7 @@ class Processor:
                 EnvironmentRule(),
                 PluginRule(),
                 AddonsRule(),
-                # s.p.mozilla_transform_rules.DatesAndTimesRule
+                DatesAndTimesRule(),
                 # s.p.mozilla_transform_rules.OutOfMemoryBinaryRule
                 # s.p.mozilla_transform_rules.JavaProcessRule
                 # s.p.mozilla_transform_rules.Winsock_LSPRule
