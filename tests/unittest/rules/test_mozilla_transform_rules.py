@@ -9,6 +9,7 @@ from processor.rules.mozilla_transform_rules import (
     DatesAndTimesRule,
     EnvironmentRule,
     ESRVersionRewrite,
+    JavaProcessRule,
     PluginContentURL,
     PluginRule,
     PluginUserComment,
@@ -262,6 +263,29 @@ class TestESRVersionRewrite:
 
         assert (failure.value.args[0] ==
             '"Version" missing from esr release raw_crash')
+
+
+class TestJavaProcessRule:
+
+    def test_everything_we_hoped_for(self, raw_crash):
+        raw_crash['JavaStackTrace'] = "this is a Java Stack trace"
+
+        processed_crash = {}
+
+        JavaProcessRule()(_, raw_crash, _, processed_crash)
+
+        assert 'java_stack_trace' in processed_crash
+        assert (processed_crash['java_stack_trace'] ==
+            raw_crash['JavaStackTrace'])
+
+
+    def test_missing_stuff(self, raw_crash):
+        # no raw_crash java stack trace
+        processed_crash = {}
+
+        JavaProcessRule()(_, raw_crash, _, processed_crash)
+
+        assert processed_crash['java_stack_trace'] == None
 
 
 class TestPluginContentURL:
