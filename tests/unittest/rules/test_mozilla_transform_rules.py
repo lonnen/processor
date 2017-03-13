@@ -15,7 +15,8 @@ from processor.rules.mozilla_transform_rules import (
     PluginUserComment,
     ProductRewrite,
     ProductRule,
-    UserDataRule
+    UserDataRule,
+    Winsock_LSPRule
 )
 from processor.util import (
     datetimeFromISOdateString
@@ -412,3 +413,22 @@ class TestUserDataRule:
             'why did my browser crash?  #fail')
         assert processed_crash['email'] == 'noreply@mozilla.com'
         assert processed_crash['user_id'] == ''
+
+
+class TestWinsock_LSPRule:
+
+    def test_everything_we_hoped_for(self, raw_crash):
+        raw_crash['Winsock_LSP'] = 'really long string'
+
+        processed_crash = {}
+
+        Winsock_LSPRule()(_, raw_crash, _, processed_crash)
+        assert processed_crash['Winsock_LSP'] == 'really long string'
+
+    def test_missing_key(self, raw_crash):
+        del raw_crash['Winsock_LSP']
+
+        processed_crash = {}
+
+        Winsock_LSPRule()(_, raw_crash, _, processed_crash)
+        assert processed_crash['Winsock_LSP'] == None
