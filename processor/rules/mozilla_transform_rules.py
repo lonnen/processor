@@ -22,11 +22,10 @@ logger = logging.getLogger(__name__)
 UTC = isodate.UTC
 
 
-# rules to transform a raw crash into a processed crash
+# TODO: rules to transform a raw crash into a processed crash
 #
 # s.p.mozilla_transform_rules.OutOfMemoryBinaryRule
-# s.p.mozilla_transform_rules.JavaProcessRule
-# s.p.mozilla_transform_rules.Winsock_LSPRule
+
 
 class AddonsRule(Rule):
     '''transform add-on information into a useful form
