@@ -320,3 +320,11 @@ class UserDataRule(Rule):
         processed_crash['email'] = raw_crash.get('Email', None)
         #processed_crash['user_id'] = raw_crash.get('UserID', '')
         processed_crash['user_id'] = ''
+
+
+class Winsock_LSPRule(Rule):
+    '''copy over winsock_lsp field if it exists
+    '''
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        processed_crash['Winsock_LSP'] = raw_crash.get('Winsock_LSP', None)

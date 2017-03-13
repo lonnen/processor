@@ -23,7 +23,8 @@ from processor.rules.mozilla_transform_rules import (
     PluginUserComment,
     ProductRewrite,
     ProductRule,
-    UserDataRule
+    UserDataRule,
+    Winsock_LSPRule
 )
 
 from everett.component import ConfigOptions, RequiredConfigMixin
@@ -176,7 +177,7 @@ class Processor:
                 DatesAndTimesRule(),
                 # s.p.mozilla_transform_rules.OutOfMemoryBinaryRule
                 JavaProcessRule(),
-                # s.p.mozilla_transform_rules.Winsock_LSPRule
+                Winsock_LSPRule(),
 
                 # post processing of the processed crash
                 #
