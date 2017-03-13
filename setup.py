@@ -43,7 +43,6 @@ setup(
     ],
     install_requires=find_install_requires(),
     include_package_data=True,
-    license="MPLv2",
     zip_safe=False,
     keywords='breakpad crash',
     classifiers=[
