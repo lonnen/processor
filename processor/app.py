@@ -17,6 +17,7 @@ from processor.rules.mozilla_transform_rules import (
     DatesAndTimesRule,
     EnvironmentRule,
     ESRVersionRewrite,
+    JavaProcessRule,
     PluginContentURL,
     PluginRule,
     PluginUserComment,
@@ -174,7 +175,7 @@ class Processor:
                 AddonsRule(),
                 DatesAndTimesRule(),
                 # s.p.mozilla_transform_rules.OutOfMemoryBinaryRule
-                # s.p.mozilla_transform_rules.JavaProcessRule
+                JavaProcessRule(),
                 # s.p.mozilla_transform_rules.Winsock_LSPRule
 
                 # post processing of the processed crash

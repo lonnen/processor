@@ -190,6 +190,17 @@ class FennecBetaError20150430(Rule):
         return True
 
 
+class JavaProcessRule(Rule):
+    '''copy or initialize the java_stack_trace
+    '''
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        processed_crash['java_stack_trace'] = raw_crash.setdefault(
+            'JavaStackTrace',
+            None
+        )
+
+
 class PluginContentURL(Rule):
     '''overwrite 'URL' with 'PluginContentURL' if it exists
     '''
