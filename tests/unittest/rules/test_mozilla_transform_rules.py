@@ -268,10 +268,8 @@ class TestESRVersionRewrite:
 
 class TestJavaProcessRule:
 
-    def test_everything_we_hoped_for(self, raw_crash):
+    def test_everything_we_hoped_for(self, raw_crash, processed_crash):
         raw_crash['JavaStackTrace'] = "this is a Java Stack trace"
-
-        processed_crash = {}
 
         JavaProcessRule()(_, raw_crash, _, processed_crash)
 
@@ -280,9 +278,8 @@ class TestJavaProcessRule:
             raw_crash['JavaStackTrace'])
 
 
-    def test_missing_stuff(self, raw_crash):
+    def test_missing_stuff(self, raw_crash, processed_crash):
         # no raw_crash java stack trace
-        processed_crash = {}
 
         JavaProcessRule()(_, raw_crash, _, processed_crash)
 
@@ -308,15 +305,13 @@ class TestPluginContentURL:
 
 class TestPluginRule:
 
-    def test_plugin_hang(self, raw_crash):
+    def test_plugin_hang(self, raw_crash, processed_crash):
         raw_crash['PluginHang'] = 1
         raw_crash['Hang'] = 0
         raw_crash['ProcessType'] = 'plugin'
         raw_crash['PluginFilename'] = 'x.exe'
         raw_crash['PluginName'] = 'X'
         raw_crash['PluginVersion'] = '0.0'
-
-        processed_crash = {}
 
         PluginRule()(_, raw_crash, _, processed_crash)
 
@@ -329,11 +324,9 @@ class TestPluginRule:
         assert processed_crash['PluginVersion'] == '0.0'
 
 
-    def test_browser_hang(self, raw_crash):
+    def test_browser_hang(self, raw_crash, processed_crash):
         raw_crash['Hang'] = 1
         raw_crash['ProcessType'] = 'browser'
-
-        processed_crash = {}
 
         PluginRule()(_, raw_crash, _, processed_crash)
 
@@ -345,9 +338,7 @@ class TestPluginRule:
         assert 'PluginVersion' not in processed_crash
 
 
-    def test_normal_crash(self, raw_crash):
-        processed_crash = {}
-
+    def test_normal_crash(self, raw_crash, processed_crash):
         PluginRule()(_, raw_crash, _, processed_crash)
 
         assert processed_crash['hangid'] == None
@@ -417,18 +408,14 @@ class TestUserDataRule:
 
 class TestWinsock_LSPRule:
 
-    def test_everything_we_hoped_for(self, raw_crash):
+    def test_everything_we_hoped_for(self, raw_crash, processed_crash):
         raw_crash['Winsock_LSP'] = 'really long string'
-
-        processed_crash = {}
 
         Winsock_LSPRule()(_, raw_crash, _, processed_crash)
         assert processed_crash['Winsock_LSP'] == 'really long string'
 
-    def test_missing_key(self, raw_crash):
+    def test_missing_key(self, raw_crash, processed_crash):
         del raw_crash['Winsock_LSP']
-
-        processed_crash = {}
 
         Winsock_LSPRule()(_, raw_crash, _, processed_crash)
         assert processed_crash['Winsock_LSP'] == None
