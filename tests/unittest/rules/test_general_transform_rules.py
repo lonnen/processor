@@ -5,6 +5,7 @@
 import pytest
 
 from processor.rules.general_transform_rules import (
+    CPUInfoRule,
     IdentifierRule,
 )
 
@@ -19,3 +20,22 @@ class TestIdentifierRule:
 
         assert processed_crash['crash_id'] == raw_crash['uuid']
         assert processed_crash['uuid'] == raw_crash['uuid']
+
+
+class TestCPUInfoRule:
+
+    def test_everything_we_hoped_for(self, processed_crash):
+        CPUInfoRule()(_, _, _, processed_crash)
+
+        assert (processed_crash['cpu_info'] ==
+            "GenuineIntel family 6 model 42 stepping 7 | 4")
+        assert processed_crash['cpu_name'] == "x86"
+
+    def test_stuff_missing(self, processed_crash):
+        del processed_crash['json_dump']['system_info']['cpu_count']
+
+        CPUInfoRule()(_, _, _, processed_crash)
+
+        assert (processed_crash['cpu_info'] ==
+            "GenuineIntel family 6 model 42 stepping 7")
+        assert processed_crash['cpu_name'] == "x86"
