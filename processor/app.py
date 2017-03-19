@@ -10,6 +10,7 @@ import logging.config
 
 from processor.rule import UUIDCorrection, CreateMetadata, SaveMetadata
 from processor.rules.general_transform_rules import (
+    CPUInfoRule,
     IdentifierRule,
 )
 from processor.rules.mozilla_transform_rules import (
@@ -26,6 +27,7 @@ from processor.rules.mozilla_transform_rules import (
     UserDataRule,
     Winsock_LSPRule
 )
+
 
 from everett.component import ConfigOptions, RequiredConfigMixin
 
@@ -182,15 +184,16 @@ class Processor:
                 # post processing of the processed crash
                 #
                 # s.p.breakpad_transform_rules.CrashingThreadRule
-                # s.p.general_transform_rules.CPUInfoRule
+                CPUInfoRule(),
                 # s.p.general_transform_rules.OSInfoRule
-                # s.p.mozilla_transform_rules.BetaVersionRule
+                # s.p.mozilla_transform_rules.BetaVersionRule(),
                 # s.p.mozilla_transform_rules.ExploitablityRule
                 # s.p.mozilla_transform_rules.FlashVersionRule
                 # s.p.mozilla_transform_rules.OSPrettyVersionRule
                 # s.p.mozilla_transform_rules.TopMostFilesRule
                 # s.p.mozilla_transform_rules.MissingSymbolsRule
                 # s.p.mozilla_transform_rules.ThemePrettyNameRule
+
                 # s.p.signature_utilities.SignatureGenerationRule
                 # s.p.signature_utilities.StackwalkerErrorSignatureRule
                 # s.p.signature_utilities.OOMSignature

@@ -17,3 +17,27 @@ class IdentifierRule(Rule):
     def action(self, crash_id, raw_crash, dumps, processed_crash):
         processed_crash['crash_id'] = raw_crash['uuid']
         processed_crash['uuid'] = raw_crash['uuid']
+
+
+class CPUInfoRule(Rule):
+    '''lift cpu_info and count out of the dump and into top-level fields
+    '''
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        processed_crash['cpu_info'] = ''
+        processed_crash['cpu_name'] = ''
+        try:
+            processed_crash['cpu_info'] = (
+                '%s | %s' % (
+                    processed_crash['json_dump']['system_info']['cpu_info'],
+                    processed_crash['json_dump']['system_info']['cpu_count']
+                )
+            )
+        except KeyError:
+            # cpu_count is likely missing
+            processed_crash['cpu_info'] = (
+                processed_crash['json_dump']['system_info']['cpu_info']
+            )
+        processed_crash['cpu_name'] = (
+            processed_crash['json_dump']['system_info']['cpu_arch']
+        )
