@@ -7,6 +7,7 @@ import pytest
 from processor.rules.general_transform_rules import (
     CPUInfoRule,
     IdentifierRule,
+    OSInfoRule
 )
 
 from tests.testlib import _
@@ -39,3 +40,12 @@ class TestCPUInfoRule:
         assert (processed_crash['cpu_info'] ==
             "GenuineIntel family 6 model 42 stepping 7")
         assert processed_crash['cpu_name'] == "x86"
+
+
+class TestOSInfoRule:
+
+    def test_everything_we_hoped_for(self, processed_crash):
+        OSInfoRule()(_, _, _, processed_crash)
+
+        assert processed_crash['os_name'] == "Windows NT"
+        assert processed_crash['os_version'] == "6.1.7601 Service Pack 1"
