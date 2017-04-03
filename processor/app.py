@@ -25,6 +25,7 @@ from processor.rules.mozilla_transform_rules import (
     PluginUserComment,
     ProductRewrite,
     ProductRule,
+    TopMostFilesRule,
     UserDataRule,
     Winsock_LSPRule
 )
@@ -191,7 +192,7 @@ class Processor:
                 ExploitablityRule(),
                 FlashVersionRule(),
                 # s.p.mozilla_transform_rules.OSPrettyVersionRule
-                # s.p.mozilla_transform_rules.TopMostFilesRule
+                TopMostFilesRule(),
                 # s.p.mozilla_transform_rules.MissingSymbolsRule
                 # s.p.mozilla_transform_rules.ThemePrettyNameRule
 

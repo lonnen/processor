@@ -17,6 +17,7 @@ from processor.rules.mozilla_transform_rules import (
     PluginUserComment,
     ProductRewrite,
     ProductRule,
+    TopMostFilesRule,
     UserDataRule,
     Winsock_LSPRule
 )
@@ -448,6 +449,42 @@ class TestProductRule:
         assert processed_crash['distributor_version'] == '12.0'
         assert processed_crash['release_channel'] == 'release'
         assert processed_crash['build'] == '20120420145725'
+
+
+class TestTopMostFilesRule:
+
+    def test_everything_we_hoped_for(self, processed_crash):
+        processed_crash['json_dump'] = {
+            'crash_info': {
+                'crashing_thread': 0
+            },
+            'crashing_thread': {
+                'frames': [
+                    {
+                        'source': 'not-the-right-file.dll'
+                    },
+                    {
+                        'file': 'not-the-right-file.cpp'
+                    },
+                ]
+            },
+            'threads': [
+                {
+                    'frames': [
+                        {
+                            'source': 'dwight.dll'
+                        },
+                        {
+                            'file': 'wilma.cpp'
+                        },
+                    ]
+                },
+            ]
+        }
+
+        TopMostFilesRule()(_, _, _, processed_crash)
+
+        assert processed_crash['topmost_filenames'] == 'wilma.cpp'
 
 
 class TestUserDataRule:

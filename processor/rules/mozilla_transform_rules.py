@@ -416,6 +416,46 @@ class PluginRule(Rule):
         processed_crash['PluginVersion'] = raw_crash.get('PluginVersion', '')
 
 
+class TopMostFilesRule(Rule):
+    """Origninating from Bug 519703, the topmost_filenames was specified as
+    singular, there would be only one.  The original programmer, in the
+    source code stated "Lets build in some flex" and allowed the field to
+    have more than one in a list.  However, in all the years that this existed
+    it was never expanded to use more than just one.  Meanwhile, the code
+    ambiguously would sometimes give this as as single value and other times
+    return it as a list of one item.
+
+    This rule does not try to reproduce that imbiguity and avoids the list
+    entirely, just giving one single value.  The fact that the destination
+    varible in the processed_crash is plural rather than singular is
+    unfortunate."""
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        processed_crash['topmost_filenames'] = None
+
+        json_dump = processed_crash['json_dump']
+        try:
+            crashing_thread = (
+                json_dump['crash_info']['crashing_thread']
+            )
+            stack_frames = (
+                json_dump['threads'][crashing_thread]['frames']
+            )
+        except KeyError as x:
+            # guess we don't have frames or crashing_thread or json_dump
+            # we have to give up
+            processed_crash['metadata']['processor_notes'].append(
+                "no 'topmost_file' name because '%s' is missing" % x
+            )
+            return
+
+        for a_frame in stack_frames:
+            source_filename = a_frame.get('file', None)
+            if source_filename:
+                processed_crash['topmost_filenames'] = source_filename
+                return
+
+
 class UserDataRule(Rule):
     '''copy user data from the raw crash to to the raw crash
     '''
