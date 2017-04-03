@@ -25,6 +25,7 @@ from processor.rules.mozilla_transform_rules import (
     PluginUserComment,
     ProductRewrite,
     ProductRule,
+    ThemePrettyNameRule,
     TopMostFilesRule,
     UserDataRule,
     Winsock_LSPRule
@@ -194,7 +195,7 @@ class Processor:
                 # s.p.mozilla_transform_rules.OSPrettyVersionRule
                 TopMostFilesRule(),
                 # s.p.mozilla_transform_rules.MissingSymbolsRule
-                # s.p.mozilla_transform_rules.ThemePrettyNameRule
+                ThemePrettyNameRule(),
 
                 # s.p.signature_utilities.SignatureGenerationRule
                 # s.p.signature_utilities.StackwalkerErrorSignatureRule
