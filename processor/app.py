@@ -188,7 +188,7 @@ class Processor:
                 CPUInfoRule(),
                 OSInfoRule(),
                 # s.p.mozilla_transform_rules.BetaVersionRule(),
-                # s.p.mozilla_transform_rules.ExploitablityRule
+                ExploitablityRule(),
                 # s.p.mozilla_transform_rules.FlashVersionRule
                 # s.p.mozilla_transform_rules.OSPrettyVersionRule
                 # s.p.mozilla_transform_rules.TopMostFilesRule
