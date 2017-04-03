@@ -10,6 +10,7 @@ from processor.rules.mozilla_transform_rules import (
     EnvironmentRule,
     ESRVersionRewrite,
     ExploitablityRule,
+    FlashVersionRule,
     JavaProcessRule,
     PluginContentURL,
     PluginRule,
@@ -284,6 +285,41 @@ class TestExploitablityRule:
         ExploitablityRule()(_, _, _, processed_crash)
 
         assert processed_crash['exploitability'] == 'unknown'
+
+
+class TestFlashVersionRule:
+
+    def test_get_flash_version(self):
+        test_tuples = [
+            ('NPSWF32_1_2_3.dll', '1.2.3', None, '1.2.3'),
+            ('NPSWF32_1_2_3.dll', None, None, '1.2.3'),
+            ('FlashPlayerPlugin_2_3_4.exe', '2.3.4', None, '2.3.4'),
+            ('FlashPlayerPlugin_2_3_4.exe', None, None, '2.3.4'),
+            ('libflashplayer3.4.5.so', '3.4.5', None, '3.4.5'),
+            ('libflashplayer3.4.5.so', None, None, '3.4.5'),
+            ('Flash Player-', '4.5.6', None, '4.5.6'),
+            ('Flash Player-4.5.6', None, None, '4.5.6'),
+            ('Flash Player-', '4.5.6', '83CF4DC03621B778E931FC713889E8F10',
+                '4.5.6'),
+            ('Flash Player-4.5.6', None,
+                '83CF4DC03621B778E931FC713889E8F10', '4.5.6'),
+            ('Flash Player-', None,
+                '83CF4DC03621B778E931FC713889E8F10',
+                '9.0.16.0')
+        ]
+
+        for params in test_tuples:
+            assert (FlashVersionRule()._get_flash_version(
+                filename=params[0],
+                version=params[1],
+                debug_id=params[2]) == params[3])
+
+
+
+    def test_everything_we_hoped_for(self, processed_crash):
+        FlashVersionRule()(_, _, _, processed_crash)
+
+        assert processed_crash['flash_version'] == '9.1.3.08'
 
 
 class TestJavaProcessRule:

@@ -189,7 +189,7 @@ class Processor:
                 OSInfoRule(),
                 # s.p.mozilla_transform_rules.BetaVersionRule(),
                 ExploitablityRule(),
-                # s.p.mozilla_transform_rules.FlashVersionRule
+                FlashVersionRule(),
                 # s.p.mozilla_transform_rules.OSPrettyVersionRule
                 # s.p.mozilla_transform_rules.TopMostFilesRule
                 # s.p.mozilla_transform_rules.MissingSymbolsRule
