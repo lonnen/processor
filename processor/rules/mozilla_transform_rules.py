@@ -175,6 +175,23 @@ class ESRVersionRewrite(Rule):
                 '"Version" missing from esr release raw_crash')
 
 
+class ExploitablityRule(Rule):
+    '''lifts exploitability out of the dump and into top-level fields
+    '''
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        try:
+            processed_crash['exploitability'] = (
+                processed_crash['json_dump']
+                ['sensitive']['exploitability']
+            )
+        except KeyError:
+            processed_crash['exploitability'] = 'unknown'
+            processed_crash['metadata']['processor_notes'].append(
+                "exploitability information missing"
+            )
+
+
 class FennecBetaError20150430(Rule):
     '''Correct the release channel for Fennec build 20150427090529
     '''

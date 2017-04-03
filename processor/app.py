@@ -12,6 +12,7 @@ from processor.rule import UUIDCorrection, CreateMetadata, SaveMetadata
 from processor.rules.general_transform_rules import (
     CPUInfoRule,
     IdentifierRule,
+    OSInfoRule
 )
 from processor.rules.mozilla_transform_rules import (
     AddonsRule,
@@ -185,9 +186,9 @@ class Processor:
                 #
                 # s.p.breakpad_transform_rules.CrashingThreadRule
                 CPUInfoRule(),
-                # s.p.general_transform_rules.OSInfoRule
+                OSInfoRule(),
                 # s.p.mozilla_transform_rules.BetaVersionRule(),
-                # s.p.mozilla_transform_rules.ExploitablityRule
+                ExploitablityRule(),
                 # s.p.mozilla_transform_rules.FlashVersionRule
                 # s.p.mozilla_transform_rules.OSPrettyVersionRule
                 # s.p.mozilla_transform_rules.TopMostFilesRule

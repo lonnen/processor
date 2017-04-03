@@ -9,6 +9,7 @@ from processor.rules.mozilla_transform_rules import (
     DatesAndTimesRule,
     EnvironmentRule,
     ESRVersionRewrite,
+    ExploitablityRule,
     JavaProcessRule,
     PluginContentURL,
     PluginRule,
@@ -264,6 +265,25 @@ class TestESRVersionRewrite:
 
         assert (failure.value.args[0] ==
             '"Version" missing from esr release raw_crash')
+
+
+class TestExploitablityRule:
+
+    def test_everything_we_hoped_for(self, processed_crash):
+        ExploitablityRule()(_, _, _, processed_crash)
+
+        assert processed_crash['exploitability'] == 'high'
+
+    def test_this_is_not_the_crash(self):
+        processed_crash = {
+            'metadata': {
+                'processor_notes': []
+            }
+        }
+
+        ExploitablityRule()(_, _, _, processed_crash)
+
+        assert processed_crash['exploitability'] == 'unknown'
 
 
 class TestJavaProcessRule:

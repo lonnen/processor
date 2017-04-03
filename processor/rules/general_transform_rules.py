@@ -41,3 +41,15 @@ class CPUInfoRule(Rule):
         processed_crash['cpu_name'] = (
             processed_crash['json_dump']['system_info']['cpu_arch']
         )
+
+class OSInfoRule(Rule):
+    '''lift os_name and os_version out of the dump and into top-level fields
+    '''
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        processed_crash['os_name'] = (
+            processed_crash['json_dump']['system_info']['os'].strip()
+        )
+        processed_crash['os_version'] = (
+            processed_crash['json_dump']['system_info']['os_ver'].strip()
+        )
