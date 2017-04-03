@@ -416,6 +416,40 @@ class PluginRule(Rule):
         processed_crash['PluginVersion'] = raw_crash.get('PluginVersion', '')
 
 
+class ThemePrettyNameRule(Rule):
+    """The Firefox theme shows up commonly in crash reports referenced by
+    its internal ID. The ID is not easy to change, and is referenced by
+    id in other software.
+
+    This rule attempts to modify it to have a more identifiable name, like
+    other built-in extensions.
+
+    Must be run after the Addons Rule."""
+
+    _CONVERSIONS = {
+        "{972ce4c6-7e08-4474-a285-3208198ce6fd}":
+            "{972ce4c6-7e08-4474-a285-3208198ce6fd} "
+            "(default theme)",
+    }
+
+    def predicate(self, crash_id, raw_crash, dumps, processed_crash):
+        '''addons is a list of tuples containing (extension, version)'''
+        addons = processed_crash.get('addons', [])
+
+        for extension, version in addons:
+            if extension in self._CONVERSIONS:
+                return True
+        return False
+
+    def action(self, crash_id, raw_crash, dumps, processed_crash):
+        addons = processed_crash['addons']
+
+        for index, (extension, version) in enumerate(addons):
+            if extension in self._CONVERSIONS:
+                addons[index] = (self._CONVERSIONS[extension], version)
+        return
+
+
 class TopMostFilesRule(Rule):
     """Origninating from Bug 519703, the topmost_filenames was specified as
     singular, there would be only one.  The original programmer, in the
