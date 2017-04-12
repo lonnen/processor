@@ -23,14 +23,13 @@ help:
 build:
 	PROCESSOR_ENV=empty.env ${DC} build deploy-base
 	PROCESSOR_ENV=empty.env ${DC} build dev-base
-	PROCESSOR_ENV=empty.env ${DC} build base
 	touch .docker-build
 
 run: .docker-build
-	PROCESSOR_ENV=${PROCESSOR_ENV} ${DC} up web
+	PROCESSOR_ENV=${PROCESSOR_ENV} ${DC} up processor
 
 shell: .docker-build
-	PROCESSOR_ENV=empty.env ${DC} run base bash
+	PROCESSOR_ENV=empty.env ${DC} run --service-ports base bash
 
 clean:
 	# python related things
@@ -55,15 +54,15 @@ clean:
 	-rm -rf fakes3_root/
 
 lint: .docker-build
-	PROCESSOR_ENV=empty.env ${DC} run base flake8 --statistics PROCESSOR tests/unittest/
+	PROCESSOR_ENV=empty.env ${DC} run base flake8 --statistics processor tests/unittest/
 
 test: .docker-build
 	PROCESSOR_ENV=empty.env ${DC} run base py.test
 
 test-coverage: .docker-build
-	PROCESSOR_ENV=empty.env ${DC} run base py.test --with-coverage --cover-package=processor --cover-inclusive --cover-html
+	PROCESSOR_ENV=empty.env ${DC} run base py.test --cov=processor --cov-report term-missing
 
 docs: .docker-build
 	PROCESSOR_ENV=empty.env ${DC} run base ./bin/build_docs.sh
 
-.PHONY: default clean build docs lint run shell test test-coverage
+.PHONY: default help clean build docs lint run shell test test-coverage
