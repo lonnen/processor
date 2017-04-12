@@ -1,13 +1,16 @@
+============================================
 Processor: A Breakpad crash report processor
 ============================================
 
-[![Build Status](https://travis-ci.org/mozilla/processor.svg?branch=master)](https://travis-ci.org/mozilla/processor)
+Built to accept crashes collected by `Antenna
+<https://github.com/mozilla/antenna>`_, applies JSON/dump pairs to the
+stackwalk_server application, parses the output, and records the results. The
+processor, coupled with stackwalk_server, is computationally intensive. Multiple
+instances of the processor can be run simultaneously.
 
-Development Status :: 2 - Pre-Alpha
-
-Built to accept crashes collected by [Antenna](https://github.com/mozilla/antenna), applies JSON/dump pairs to the stackwalk_server application, parses the output, and records the results. The processor, coupled with stackwalk_server, is computationally intensive. Multiple instances of the processor can be run simultaneously.
-
-* Free software: Mozilla Public License version 2.0
+:Free software: Mozilla Public License version 2.0
+:Documentation: https://processor.readthedocs.io/
+:Status:        Pre-alpha
 
 
 Quickstart
@@ -45,11 +48,6 @@ production, see docs_.
    .. code-block:: shell
 
       $ make run
-
-
-   You should see a lot of output. It'll start out with something like this::
-
-      PROCESSOR_ENV="prod.env" /usr/bin/docker-compose up web
 
 
    In another terminal, you can verify the proper containers are running with
@@ -95,4 +93,4 @@ production, see docs_.
 For more details on running Processor or hacking on Processor, see the docs_.
 
 .. _py.test: http://pytest.org/
-.. _docs: TODO
+.. _docs: https://processor.readthedocs.io/
