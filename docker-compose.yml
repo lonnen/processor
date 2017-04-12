@@ -26,15 +26,15 @@ services:
   # and building docs.
   base:
     image: local/processor_dev
+    environment:
+      - COVERAGE_FILE=/tmp/.coverage
     volumes:
       - .:/app
 
-  # Web container is a prod-like fully-functioning Processor container.
-  web:
+  # Processor container for a prod-like processor.
+  processor:
     extends:
       service: base
     environment:
       - PROCESSOR_ENV=${PROCESSOR_ENV}
-    ports:
-      - "8000:8000"
-    command: ./bin/run_web.sh
+    command: ./bin/run_processor.sh
