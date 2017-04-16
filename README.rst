@@ -43,18 +43,35 @@ production, see docs_.
 
    Anytime you want to update the containers, you can run ``make build``.
 
-4. Run with a prod-like fully-functional configuration:
+4. Run with a prod-like fully-functional configuration.
 
-   .. code-block:: shell
+   1. Running:
 
-      $ make run
+      .. code-block:: shell
+
+         $ make run
 
 
-   In another terminal, you can verify the proper containers are running with
-   ``docker ps``.
+   2. Verify things are running:
 
-   When you're done with the Processor process, hit CTRL-C to gracefully kill
-   the docker web container.
+      In another terminal, you can verify the proper containers are running with
+      ``docker ps``.
+
+   3. Look at runtime metrics with Grafana:
+
+      The ``statsd`` container has `Grafana <https://grafana.com/>`_. You can view
+      the statsd data via Grafana in your web browser `<http://localhost:9000>`_.
+
+      To log into Grafana, use username ``admin`` and password ``admin``.
+
+      You'll need to set up a Graphite datasource pointed to
+      ``http://localhost:8000``.
+
+   4. Shutting down the processor:
+
+      When you're done with the Processor process, hit CTRL-C to gracefully kill
+      the docker container.
+
 
    If you want to run with a different Processor configuration, put the
    configuration in an env file and then set ``PROCESSOR_ENV``. For example:

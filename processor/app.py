@@ -3,10 +3,13 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import os
-from pathlib import Path
-
 import logging
 import logging.config
+from pathlib import Path
+
+from everett.manager import ConfigManager, ConfigEnvFileEnv, ConfigOSEnv, ListOf, parse_class
+from everett.component import ConfigOptions, RequiredConfigMixin
+import markus
 
 from processor.rule import UUIDCorrection, CreateMetadata, SaveMetadata
 from processor.rules.general_transform_rules import (
@@ -32,9 +35,8 @@ from processor.rules.mozilla_transform_rules import (
 )
 
 
-from everett.component import ConfigOptions, RequiredConfigMixin
-
 logger = logging.getLogger(__name__)
+
 
 def setup_logging(logging_level):
     """Initializes Python logging configuration"""
@@ -69,6 +71,19 @@ def setup_logging(logging_level):
     logging.config.dictConfig(dc)
 
 
+def setup_metrics(metrics_classes, config, logger=None):
+    """Initializes the metrics system"""
+    logger.info('Setting up metrics: %s', metrics_classes)
+
+    markus_configuration = []
+    for cls in metrics_classes:
+        backend = cls(config)
+        log_config(logger, backend)
+        markus_configuration.append(backend.to_markus())
+
+    markus.configure(markus_configuration)
+
+
 def log_unhandled(fun):
     @wraps(fun)
     def _log_unhandled(*args, **kwargs):
@@ -79,6 +94,7 @@ def log_unhandled(fun):
             raise
 
     return _log_unhandled
+
 
 def log_config(logger, component):
     for namespace, key, val, opt in component.get_runtime_config():
@@ -94,6 +110,7 @@ def log_config(logger, component):
         else:
             msg = '%s=%s' % (namespaced_key, val)
         logger.info(msg)
+
 
 class AppConfig(RequiredConfigMixin):
     """Application-level config
@@ -141,7 +158,15 @@ class AppConfig(RequiredConfigMixin):
         default='DEBUG',
         doc='The logging level to use. DEBUG, INFO, WARNING, ERROR or CRITICAL'
     )
-
+    required_config.add_option(
+        'metrics_class',
+        default='processor.metrics.LoggingMetrics',
+        doc=(
+            'Comma-separated list of metrics backends to use. Possible options: '
+            '"processor.metrics.LoggingMetrics" and "processor.metrics.DatadogMetrics"',
+        ),
+        parser=ListOf(parse_class)
+    )
 
     def __init__(self, config):
         self.config_manager = config

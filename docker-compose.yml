@@ -38,3 +38,10 @@ services:
     environment:
       - PROCESSOR_ENV=${PROCESSOR_ENV}
     command: ./bin/run_processor.sh
+
+  # https://hub.docker.com/r/kamon/grafana_graphite/
+  # username: admin, password: admin
+  statsd:
+    image: kamon/grafana_graphite
+    ports:
+      - "9000:3000"  # grafana port
