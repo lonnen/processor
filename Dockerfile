@@ -1,4 +1,4 @@
-FROM python:3.5.2-slim
+FROM python:3.5.3-slim
 
 RUN groupadd --gid 10001 app && \
     useradd --uid 10001 --gid 10001 --shell /usr/sbin/nologin --home /app --create-home app
