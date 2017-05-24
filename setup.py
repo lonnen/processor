@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 """
 module installation information
 """
@@ -23,6 +27,7 @@ def read(fname):
     with codecs.open(fpath, 'r', 'utf8') as fhandle:
         return fhandle.read().strip()
 
+
 def find_install_requires():
     """
     utility function to build a list of requirements from requirements.txt
@@ -30,6 +35,7 @@ def find_install_requires():
     return [x.strip().split()[0].strip() for x in
             read('requirements.txt').splitlines()
             if x.strip() and not x.startswith('#')]
+
 
 setup(
     name="processor",

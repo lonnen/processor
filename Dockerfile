@@ -1,9 +1,7 @@
-FROM python:3.5.3-slim
-
-RUN groupadd --gid 10001 app && \
-    useradd --uid 10001 --gid 10001 --shell /usr/sbin/nologin --home /app --create-home app
+FROM python:3.6.1-slim
 
 WORKDIR /app/
+RUN groupadd --gid 10001 app && useradd -g app --uid 10001 --shell /usr/sbin/nologin app
 
 RUN apt-get update && \
     apt-get install -y gcc apt-transport-https
@@ -25,5 +23,5 @@ ENV PORT 8000
 USER app
 EXPOSE $PORT
 
-# FIXME(willkg): Set ENTRYPOINT and CMD.
+# FIXME(willkg): Set CMD.
 # https://github.com/mozilla-services/Dockerflow#dockerfile-requirements
