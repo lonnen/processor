@@ -2,10 +2,11 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import os
+from functools import wraps
 import logging
 import logging.config
 from pathlib import Path
+import socket
 
 from everett.manager import ConfigManager, ConfigEnvFileEnv, ConfigOSEnv, ListOf, parse_class
 from everett.component import ConfigOptions, RequiredConfigMixin
@@ -38,33 +39,56 @@ from processor.rules.mozilla_transform_rules import (
 logger = logging.getLogger(__name__)
 
 
-def setup_logging(logging_level):
+def setup_logging(app_config):
     """Initializes Python logging configuration"""
+    host_id = app_config('host_id') or socket.gethostname()
+
+    class AddHostID(logging.Filter):
+        def filter(self, record):
+            record.host_id = host_id
+            return True
+
     dc = {
         'version': 1,
         'disable_existing_loggers': True,
+        'filters': {
+            'add_hostid': {
+                '()': AddHostID
+            }
+        },
         'formatters': {
-            'development': {
-                'format': '[%(asctime)s] [%(levelname)s] %(name)s: %(message)s',
-                'datefmt': '%Y-%m-%d %H:%M:%S %z',
+            'mozlog': {
+                '()': 'dockerflow.logging.JsonLogFormatter',
+                'logger_name': 'antenna'
             },
         },
         'handlers': {
             'console': {
                 'level': 'DEBUG',
                 'class': 'logging.StreamHandler',
-                'formatter': 'development',
+                'filters': ['add_hostid'],
+            },
+            'mozlog': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+                'formatter': 'mozlog',
+                'filters': ['add_hostid'],
             },
         },
         'root': {
-            'handlers': ['console'],
+            'handlers': ['mozlog'],
             'level': 'WARNING',
         },
         'loggers': {
             'processor': {
                 'propagate': False,
+                'handlers': ['mozlog'],
+                'level': app_config('logging_level'),
+            },
+            'markus': {
+                'propagate': False,
                 'handlers': ['console'],
-                'level': logging_level,
+                'level': 'INFO',
             },
         },
     }
@@ -105,7 +129,7 @@ def log_config(logger, component):
 
         namespaced_key = namespaced_key.upper()
 
-        if 'secret' in opt.key.lower():
+        if 'secret' in opt.key.lower() and val:
             msg = '%s=*****' % namespaced_key
         else:
             msg = '%s=%s' % (namespaced_key, val)
@@ -167,6 +191,26 @@ class AppConfig(RequiredConfigMixin):
         ),
         parser=ListOf(parse_class)
     )
+    required_config.add_option(
+        'secret_sentry_dsn',
+        default='',
+        doc=(
+            'Sentry DSN to use. See https://docs.sentry.io/quickstart/#configure-the-dsn '
+            'for details. If this is not set an unhandled exception logging middleware '
+            'will be used instead.'
+        )
+    )
+    required_config.add_option(
+        'host_id',
+        default='',
+        doc=(
+            'Identifier for the host that is running Antenna. This identifies this Antenna '
+            'instance in the logs and makes it easier to correlate Antenna logs with '
+            'other data. For example, the value could be a public hostname, an instance id, '
+            'or something like that. If you do not set this, then socket.gethostname() is '
+            'used instead.'
+        )
+    )
 
     def __init__(self, config):
         self.config_manager = config
@@ -178,8 +222,9 @@ class AppConfig(RequiredConfigMixin):
 
 class Processor:
     def __init__(self, config):
-        pass
+        self.config = config
 
+    # FIXME(willkg): this is all prototypey filler
     def main(self, crash_id):
         # while True:
         try:
