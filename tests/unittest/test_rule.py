@@ -4,15 +4,20 @@
 
 import pytest
 
-from processor.rule import (CreateMetadata, Identity, Introspector, Rule,
-    SaveMetadata, UUIDCorrection)
+from processor.rule import (
+    CreateMetadata,
+    Identity,
+    Introspector,
+    Rule,
+    SaveMetadata,
+    UUIDCorrection
+)
 
 # rules expect a dict-like interface for most args
 from tests.testlib import _dict as _
 
 
 class TestRule:
-
     def test_default_rule(self):
         __ = frozenset(_)
         r = Rule()
@@ -70,6 +75,7 @@ class TestUUIDCorrection:
         r.action(crash_id, raw_crash, _, _)
         assert 'uuid' in raw_crash and raw_crash['uuid'] == crash_id
 
+
 class TestCreateMetadata:
 
     def test_no_history(self):
@@ -86,6 +92,7 @@ class TestCreateMetadata:
         assert 'original_processor_notes' in metadata
         assert (metadata['processor_notes'] ==
             ['earlier processing: Unknown Date'])
+
 
 class TestSaveMetadata:
 
@@ -116,5 +123,5 @@ class TestSaveMetadata:
         assert 'metadata' not in processed_crash
         assert (processed_crash.get('processor_notes') ==
             'dwight; wilma; Processor2015; earlier processing: Unknown Date')
-        assert processed_crash.get('completed_datetime', None) #TODO: freezegun
+        assert processed_crash.get('completed_datetime', None)  # TODO: freezegun
         assert processed_crash.get('success')

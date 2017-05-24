@@ -23,7 +23,7 @@ from processor.rules.mozilla_transform_rules import (
     Winsock_LSPRule
 )
 from processor.util import (
-    datetimeFromISOdateString
+    datetime_from_isodate_string
 )
 
 from tests.testlib import _
@@ -78,12 +78,12 @@ class TestDatesAndTimesRule:
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
         assert (processed_crash['submitted_timestamp'] ==
-            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
         assert (processed_crash['date_processed'] ==
             processed_crash['submitted_timestamp'])
         assert processed_crash['crash_time'] == 1336519554
         assert (processed_crash['client_crash_date'] ==
-            datetimeFromISOdateString('2012-05-08 23:25:54+00:00'))
+            datetime_from_isodate_string('2012-05-08 23:25:54+00:00'))
         assert processed_crash['install_age'] == 1079662
         assert processed_crash['uptime'] == 20116
         assert processed_crash['last_crash'] == 86985
@@ -94,12 +94,12 @@ class TestDatesAndTimesRule:
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
         assert (processed_crash['submitted_timestamp'] ==
-            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
         assert (processed_crash['date_processed'] ==
             processed_crash['submitted_timestamp'])
         assert processed_crash['crash_time'] == 1336519554
         assert (processed_crash['client_crash_date'] ==
-            datetimeFromISOdateString('2012-05-08 23:25:54+00:00'))
+            datetime_from_isodate_string('2012-05-08 23:25:54+00:00'))
         assert processed_crash['install_age'] == 1079662
         assert processed_crash['uptime'] == 20116
         assert processed_crash['last_crash'] == 86985
@@ -113,12 +113,12 @@ class TestDatesAndTimesRule:
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
         assert (processed_crash['submitted_timestamp'] ==
-            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
         assert (processed_crash['date_processed'] ==
             processed_crash['submitted_timestamp'])
         assert processed_crash['crash_time'] == 0
         assert (processed_crash['client_crash_date'] ==
-            datetimeFromISOdateString('1970-01-01 00:00:00+00:00'))
+            datetime_from_isodate_string('1970-01-01 00:00:00+00:00'))
         assert processed_crash['install_age'] == -1335439892
         assert processed_crash['uptime'] == 0
         assert processed_crash['last_crash'] == 86985
@@ -137,12 +137,12 @@ class TestDatesAndTimesRule:
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
         assert (processed_crash['submitted_timestamp'] ==
-            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
         assert (processed_crash['date_processed'] ==
             processed_crash['submitted_timestamp'])
         assert processed_crash['crash_time'] == 1336519554
         assert (processed_crash['client_crash_date'] ==
-            datetimeFromISOdateString('2012-05-08 23:25:54+00:00'))
+            datetime_from_isodate_string('2012-05-08 23:25:54+00:00'))
         assert processed_crash['install_age'] == 1079662
         assert processed_crash['uptime'] == 0
         assert processed_crash['last_crash'] == 86985
@@ -158,12 +158,12 @@ class TestDatesAndTimesRule:
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
         assert (processed_crash['submitted_timestamp'] ==
-            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
         assert (processed_crash['date_processed'] ==
             processed_crash['submitted_timestamp'])
         assert processed_crash['crash_time'] == 1336519554
         assert (processed_crash['client_crash_date'] ==
-            datetimeFromISOdateString('2012-05-08 23:25:54+00:00'))
+            datetime_from_isodate_string('2012-05-08 23:25:54+00:00'))
         assert processed_crash['install_age'] == 1079662
         assert processed_crash['uptime'] == 0
         assert processed_crash['last_crash'] == 86985
@@ -176,12 +176,12 @@ class TestDatesAndTimesRule:
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
         assert (processed_crash['submitted_timestamp'] ==
-            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
         assert (processed_crash['date_processed'] ==
             processed_crash['submitted_timestamp'])
         assert processed_crash['crash_time'] == 1336519554
         assert (processed_crash['client_crash_date'] ==
-            datetimeFromISOdateString('2012-05-08 23:25:54+00:00'))
+            datetime_from_isodate_string('2012-05-08 23:25:54+00:00'))
         assert processed_crash['install_age'] == 1079662
         assert processed_crash['uptime'] == 1336519554
         assert processed_crash['last_crash'] == 86985
@@ -197,12 +197,12 @@ class TestDatesAndTimesRule:
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
         assert (processed_crash['submitted_timestamp'] ==
-            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
         assert (processed_crash['date_processed'] ==
             processed_crash['submitted_timestamp'])
         assert processed_crash['crash_time'] == 1336519554
         assert (processed_crash['client_crash_date'] ==
-            datetimeFromISOdateString('2012-05-08 23:25:54+00:00'))
+            datetime_from_isodate_string('2012-05-08 23:25:54+00:00'))
         assert processed_crash['install_age'] == 1336519554
         assert processed_crash['uptime'] == 20116
         assert processed_crash['last_crash'] == 86985
@@ -218,12 +218,12 @@ class TestDatesAndTimesRule:
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
         assert (processed_crash['submitted_timestamp'] ==
-            datetimeFromISOdateString(raw_crash['submitted_timestamp']))
+            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
         assert (processed_crash['date_processed'] ==
             processed_crash['submitted_timestamp'])
         assert processed_crash['crash_time'] == 1336519554
         assert (processed_crash['client_crash_date'] ==
-            datetimeFromISOdateString('2012-05-08 23:25:54+00:00'))
+            datetime_from_isodate_string('2012-05-08 23:25:54+00:00'))
         assert processed_crash['install_age'] == 1079662
         assert processed_crash['uptime'] == 20116
         assert processed_crash['last_crash'] == None

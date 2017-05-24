@@ -10,6 +10,7 @@ from processor.rule import Identity, Introspector, Rule
 
 from tests.unittest.test_rule import BadTransformRule
 
+
 class TestCrash:
 
     def test_fetch_crash_info(self):

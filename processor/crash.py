@@ -9,11 +9,12 @@ from processor.rule import Identity
 
 logger = logging.getLogger(__name__)
 
-'''A crash object represents a single crash event
+"""
+A crash object represents a single crash event
 
 Usage::
 
-    from rules import rule1, rule2, rule_printer
+    from processor.rules import rule1, rule2, rule_printer
 
     crash = Crash('AAAAAAAA-1111-4242-FFFB-094F01B8FF11')
 
@@ -23,11 +24,11 @@ Usage::
       .transform(rule_printer)
       .save()
 
-'''
+"""
 
 class Crash:
     def __init__(self, crash_id):
-        '''construct a class object with a given crash_id and initialize
+        """construct a class object with a given crash_id and initialize
         other fields as empty
 
         :arg String crash_id: crash key for indexing
@@ -37,7 +38,8 @@ class Crash:
             Crash('AAAAAAAA-1111-4242-FFFB-094F01B8FF11')
 
         :returns Crash: a mostly-unitialized crash object
-        '''
+
+        """
         self.crash_id = crash_id
 
         # a mapping containing the raw crash meta data
@@ -45,11 +47,11 @@ class Crash:
 
         # a mapping of dump name keys and paths to file system locations
         # for the dump data
-        self.dumps = {} # TODO implement, see
+        self.dumps = {}  # TODO implement, see
         # socorro.external.crashstorage_base.MemoryDumpsMapping()
 
         # a mapping containing the processed crash meta data
-        self.processed_crash = {} # TODO DotDict()
+        self.processed_crash = {}  # TODO DotDict()
 
         # stores supressed errors that occur during transformation steps
         # for the lifetime of this crash object, intended to be append and
@@ -57,17 +59,20 @@ class Crash:
         self._errors = []
 
     def transform(self, rule=Identity, supress_errors=False):
-        '''applies a transformation to the internal crash state
+        """applies a transformation to the internal crash state
 
         :arg Callable rule: callable that will perform the transformation
 
         :arg Boolean supress_errors: should errors be supressed and stored
-        internally. Historically transformation failures have not been
-        treated as fatal, and most transformations have been written assuming that failure is a normal control signal. Still, this defaults to `False` because silencing failure should be explicit.
+        internally. Historically transformation failures have not been treated
+        as fatal, and most transformations have been written assuming that
+        failure is a normal control signal. Still, this defaults to `False`
+        because silencing failure should be explicit.
 
         :raises Error: if supress_errors is False this may raise arbitrary
         errors
-        '''
+
+        """
         try:
             rule(self.crash_id, self.raw_crash, self.dumps,
                 self.processed_crash)
@@ -84,42 +89,43 @@ class Crash:
 
         return self
 
-
     def pipeline(self, *args, supress_errors=False):
-        '''sugar for applying multiple transformations
+        """sugar for applying multiple transformations
 
         :arg Callables *args: an arbitrary number of callable rules to
         be executed in succession
 
         :raises Error: if supress_errors is False this may raise arbitrary
         errors
-        '''
+        """
         for arg in args:
             self.transform(arg, supress_errors=supress_errors)
         return self
 
     def fetch(self, supress_errors=False):
-        '''fetch remote crash information, overwriting local state.
+        """fetch remote crash information, overwriting local state.
 
         supress_errors - Boolean should errors be supressed and stored
         internally
 
-        :raises Error: this touches the network, so all kinds of things
-        may go wrong. These errors are generally fatal and should not be
-        supressed.
-        '''
+        :raises Error: this touches the network, so all kinds of things may go
+        wrong. These errors are generally fatal and should not be supressed.
+
+        """
         self.transform(get_crash_data, supress_errors)
         return self
 
     def save(self, supress_errors=False):
-        '''write local crash information to remote sources,
-        overwriting their representation with this object's state.
+        """write local crash information to remote sources, overwriting their
+        representation with this object's state.
 
         :raises Error: high seas in a rickety boat, here. Errors here are
         generally fatal and should not be supressed.
-        '''
+
+        """
         self.transform(put_crash_data, supress_errors)
         return self
+
 
 def get_crash_data(crash_id, raw_crash, dumps, processed_crash):
     """Attempt to fetch everything we know about a crash_id.
@@ -146,6 +152,7 @@ def get_crash_data(crash_id, raw_crash, dumps, processed_crash):
         _reject(crash_id, 'error loading crash')
     return raw_crash, dumps, processed_crash
 
+
 def put_crash_data(crash_id, raw_crash, dumps, processed_crash):
     return
     """write the modified crashes"""
@@ -164,6 +171,7 @@ def put_crash_data(crash_id, raw_crash, dumps, processed_crash):
         crash_id
     )
     logger.info('saved - %s', crash_id)
+
 
 def _reject(crash_id, reason):
     logger.warning("%s rejected: %s", crash_id, reason)

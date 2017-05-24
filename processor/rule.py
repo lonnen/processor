@@ -2,11 +2,12 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from processor.util import utc_now
-
 import logging
 
+from processor.util import utc_now
+
 logger = logging.getLogger(__name__)
+
 
 class Rule():
     '''A callable transformation for manipulating crash state.
@@ -181,7 +182,7 @@ class SaveMetadata(Rule):
             metadata['processor_notes']
         )
 
-        processed_crash['completed_datetime'] =  utc_now()
+        processed_crash['completed_datetime'] = utc_now()
         processed_crash['success'] = True
         # finally, delete metadata so it is not persisted anywhere
         del processed_crash['metadata']

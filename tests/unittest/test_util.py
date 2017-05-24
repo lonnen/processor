@@ -4,21 +4,18 @@
 
 import datetime
 
+from freezegun import freeze_time
 import isodate
 import pytest
 import re
 
 from processor.util import (
-    createNewOoid,
-    dateAndDepthFromOoid,
+    create_crash_id,
     datestring_to_weekly_partition,
     date_to_string,
-    depthFromOoid,
-    dateFromOoid,
-    datetimeFromISOdateString,
+    datetime_from_isodate_string,
+    get_date_from_crash_id,
     string_to_datetime,
-    uuid_to_date,
-    uuidToOoid,
     utc_now
 )
 
@@ -32,6 +29,22 @@ def test_utc_now():
     assert res.strftime('%Z') == 'UTC'
     assert res.strftime('%z') == '+0000'
     assert res.tzinfo
+
+
+@freeze_time('2011-09-06 00:00:00', tz_offset=0)
+def test_crash_id():
+    """Tests creating crash ids"""
+    crash_id = create_crash_id()
+
+    assert get_date_from_crash_id(crash_id) == '20110906'
+    assert get_date_from_crash_id(crash_id, as_datetime=True).strftime('%Y%m%d') == '20110906'
+
+
+def test_crash_id_with_date():
+    """Tests creating a crash id with a timestamp"""
+    crash_id = create_crash_id(datetime.datetime(2016, 10, 4))
+
+    assert get_date_from_crash_id(crash_id) == '20161004'
 
 
 def test_string_to_datetime():
@@ -153,18 +166,6 @@ def test_date_to_string():
 def test_date_to_string_fail():
     with pytest.raises(TypeError):
         date_to_string('2012-01-03')
-
-
-def test_uuid_to_date():
-    uuid = "e8820616-1462-49b6-9784-e99a32120201"
-    date_exp = datetime.date(year=2012, month=2, day=1)
-    date = uuid_to_date(uuid)
-    assert date == date_exp
-
-    uuid = "e8820616-1462-49b6-9784-e99a32181223"
-    date_exp = datetime.date(year=1118, month=12, day=23)
-    date = uuid_to_date(uuid, century=11)
-    assert date == date_exp
 
 
 def test_date_to_weekly_partition_with_string():

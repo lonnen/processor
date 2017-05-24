@@ -31,6 +31,7 @@ class DogStatsdMetrics(RequiredConfigMixin):
         default='',
         doc='Namespace for these metrics'
     )
+
     def __init__(self, config):
         self.config = config.with_options(self)
 
