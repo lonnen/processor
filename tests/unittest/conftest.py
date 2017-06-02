@@ -18,7 +18,7 @@ sys.path.insert(0, str(REPO_ROOT))
 # Add testlib so we can import testlib modules.
 sys.path.insert(0, str(REPO_ROOT / 'tests'))
 
-from processor.app import setup_logging # noqa
+from jansky.app import setup_logging  # noqa
 from testlib.loggingmock import LoggingMock  # noqa
 
 

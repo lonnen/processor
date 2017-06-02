@@ -4,7 +4,7 @@
 
 import logging
 
-from processor.util import utc_now
+from jansky.util import utc_now
 
 logger = logging.getLogger(__name__)
 

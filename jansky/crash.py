@@ -4,7 +4,7 @@
 
 import logging
 
-from processor.rule import Identity
+from jansky.rule import Identity
 
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ A crash object represents a single crash event
 
 Usage::
 
-    from processor.rules import rule1, rule2, rule_printer
+    from jansky.rules import rule1, rule2, rule_printer
 
     crash = Crash('AAAAAAAA-1111-4242-FFFB-094F01B8FF11')
 
@@ -147,7 +147,7 @@ def get_crash_data(crash_id, raw_crash, dumps, processed_crash):
         except CrashIDNotFound:
             processed_crash = DotDict()
     except CrashIDNotFound:
-        _reject(crash_id, 'CrashIDNotFound') # from processor2015/processor_2015.py
+        _reject(crash_id, 'CrashIDNotFound')  # from processor2015/processor_2015.py
     except Exception:
         _reject(crash_id, 'error loading crash')
     return raw_crash, dumps, processed_crash

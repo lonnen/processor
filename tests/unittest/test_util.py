@@ -9,7 +9,7 @@ import isodate
 import pytest
 import re
 
-from processor.util import (
+from jansky.util import (
     create_crash_id,
     datestring_to_weekly_partition,
     date_to_string,
