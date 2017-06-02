@@ -4,7 +4,7 @@
 
 import logging
 
-from processor.rule import Rule
+from jansky.rule import Rule
 
 logger = logging.getLogger(__name__)
 

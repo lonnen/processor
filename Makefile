@@ -21,15 +21,15 @@ help:
 	make build
 
 build:
-	PROCESSOR_ENV=empty.env ${DC} build deploy-base
-	PROCESSOR_ENV=empty.env ${DC} build dev-base
+	JANSKY_ENV=empty.env ${DC} build deploy-base
+	JANSKY_ENV=empty.env ${DC} build dev-base
 	touch .docker-build
 
 run: .docker-build
-	PROCESSOR_ENV=${PROCESSOR_ENV} ${DC} up processor
+	JANSKY_ENV=${JANSKY_ENV} ${DC} up processor
 
 shell: .docker-build
-	PROCESSOR_ENV=empty.env ${DC} run --service-ports base bash
+	JANSKY_ENV=empty.env ${DC} run --service-ports base bash
 
 clean:
 	# python related things
@@ -44,7 +44,7 @@ clean:
 
 	# test related things
 	-rm -f .coverage
-	PROCESSOR_ENV=empty.env ${DC} run base rm -rf cover
+	JANSKY_ENV=empty.env ${DC} run base rm -rf cover
 
 	# docs files
 	-rm -rf docs/_build/
@@ -54,15 +54,15 @@ clean:
 	-rm -rf fakes3_root/
 
 lint: .docker-build
-	PROCESSOR_ENV=empty.env ${DC} run base flake8 --statistics processor tests/unittest/
+	JANSKY_ENV=empty.env ${DC} run base flake8 --statistics processor tests/unittest/
 
 test: .docker-build
-	PROCESSOR_ENV=empty.env ${DC} run base py.test
+	JANSKY_ENV=empty.env ${DC} run base py.test
 
 test-coverage: .docker-build
-	PROCESSOR_ENV=empty.env ${DC} run base py.test --cov=processor --cov-report term-missing
+	JANSKY_ENV=empty.env ${DC} run base py.test --cov=processor --cov-report term-missing
 
 docs: .docker-build
-	PROCESSOR_ENV=empty.env ${DC} run base ./bin/build_docs.sh
+	JANSKY_ENV=empty.env ${DC} run base ./bin/build_docs.sh
 
 .PHONY: default help clean build docs lint run shell test test-coverage

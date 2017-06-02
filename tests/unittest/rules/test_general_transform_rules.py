@@ -4,7 +4,7 @@
 
 import pytest
 
-from processor.rules.general_transform_rules import (
+from jansky.rules.general_transform_rules import (
     CPUInfoRule,
     IdentifierRule,
     OSInfoRule
