@@ -2,10 +2,9 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from processor.util import utc_now
-from processor.rule import Rule
-
 import logging
+
+from processor.rule import Rule
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +40,7 @@ class CPUInfoRule(Rule):
         processed_crash['cpu_name'] = (
             processed_crash['json_dump']['system_info']['cpu_arch']
         )
+
 
 class OSInfoRule(Rule):
     '''lift os_name and os_version out of the dump and into top-level fields

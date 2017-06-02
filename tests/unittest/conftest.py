@@ -4,7 +4,6 @@
 
 import contextlib
 from pathlib import Path
-
 import sys
 from unittest import mock
 
@@ -25,7 +24,10 @@ from testlib.loggingmock import LoggingMock  # noqa
 
 def pytest_runtest_setup():
     # Make sure we set up logging to sane default values.
-    setup_logging('DEBUG')
+    setup_logging(ConfigManager.from_dict({
+        'HOST_ID': '',
+        'LOGGING_LEVEL': 'DEBUG'
+    }))
 
 
 @pytest.fixture
@@ -46,6 +48,7 @@ def randommock():
             yield
 
     return _randommock
+
 
 @pytest.fixture
 def loggingmock():
@@ -80,6 +83,7 @@ def loggingmock():
         with LoggingMock(names=names) as loggingmock:
             yield loggingmock
     return _loggingmock
+
 
 @pytest.fixture
 def raw_crash():
@@ -154,6 +158,7 @@ def raw_crash():
         "Distributor_version": "12.0",
     }
 
+
 @pytest.fixture
 def processed_crash():
     return {
@@ -161,12 +166,12 @@ def processed_crash():
             'processor_notes': []
         },
         'json_dump': {
-            "system_info" : {
-                "os_ver" : "6.1.7601 Service Pack 1 ",
-                "cpu_count" : 4,
-                "cpu_info" : "GenuineIntel family 6 model 42 stepping 7",
-                "cpu_arch" : "x86",
-                "os" : "Windows NT"
+            "system_info": {
+                "os_ver": "6.1.7601 Service Pack 1 ",
+                "cpu_count": 4,
+                "cpu_info": "GenuineIntel family 6 model 42 stepping 7",
+                "cpu_arch": "x86",
+                "os": "Windows NT"
             },
             'sensitive': {
                 'exploitability': 'high'

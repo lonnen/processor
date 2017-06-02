@@ -10,7 +10,7 @@ import time
 from sys import maxsize
 
 
-from processor.util import dateFromOoid, datetimeFromISOdateString, utc_now
+from processor.util import get_date_from_crash_id, datetime_from_isodate_string, utc_now
 from processor.rule import Rule
 
 from urllib.parse import unquote_plus
@@ -68,11 +68,11 @@ class DatesAndTimesRule(Rule):
 
         processed_crash['submitted_timestamp'] = raw_crash.get(
             'submitted_timestamp',
-            dateFromOoid(raw_crash['uuid'])
+            get_date_from_crash_id(raw_crash['uuid'])
         )
 
         if isinstance(processed_crash['submitted_timestamp'], str):
-            processed_crash['submitted_timestamp'] = datetimeFromISOdateString(
+            processed_crash['submitted_timestamp'] = datetime_from_isodate_string(
                 processed_crash['submitted_timestamp']
             )
 
@@ -398,13 +398,12 @@ class PluginRule(Rule):
         if raw_crash.get('PluginHang', False):
             processed_crash['hangid'] = 'fake-' + raw_crash['uuid']
 
-
-        processed_crash['hang_type'] = 0 # normal crash, not a hang
+        processed_crash['hang_type'] = 0  # normal crash, not a hang
 
         if raw_crash.get('Hang'):
-            processed_crash['hang_type'] = 1 # browser hang
+            processed_crash['hang_type'] = 1  # browser hang
         elif raw_crash.get('HangID') or processed_crash.get('hangid'):
-            processed_crash['hang_type'] = -1 # plugin hang
+            processed_crash['hang_type'] = -1  # plugin hang
 
         processed_crash['process_type'] = raw_crash.get('ProcessType', None)
 
@@ -498,7 +497,7 @@ class UserDataRule(Rule):
         processed_crash['url'] = raw_crash.get('URL', None)
         processed_crash['user_comments'] = raw_crash.get('Comments', None)
         processed_crash['email'] = raw_crash.get('Email', None)
-        #processed_crash['user_id'] = raw_crash.get('UserID', '')
+        # processed_crash['user_id'] = raw_crash.get('UserID', '')
         processed_crash['user_id'] = ''
 
 
