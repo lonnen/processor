@@ -1,4 +1,4 @@
-FROM local/processor_deploy_base
+FROM local/jansky_deploy_base
 
 # Switch to root to install stuff
 USER root

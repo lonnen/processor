@@ -5,8 +5,8 @@
 
 import pytest
 
-from processor.crash import Crash
-from processor.rule import Identity, Introspector, Rule
+from jansky.crash import Crash
+from jansky.rule import Identity, Introspector, Rule
 
 from tests.unittest.test_rule import BadTransformRule
 

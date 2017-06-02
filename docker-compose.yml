@@ -1,4 +1,4 @@
-# docker-compose for processor development.
+# docker-compose for Jansky development.
 #
 # Note: Requires docker 1.10.0+ and docker-compose 1.6.0+.
 version: "2"
@@ -9,14 +9,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: local/processor_deploy_base
+    image: local/jansky_deploy_base
 
   # This builds an image that extends Dockerfile with dev-related things.
   dev-base:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    image: local/processor_dev
+    image: local/jansky_dev
 
   # ------------------------------------------------------------------
   # After this point is dev-related services.
@@ -25,19 +25,19 @@ services:
   # Base container is used for development tasks like tests, linting, coverage
   # and building docs.
   base:
-    image: local/processor_dev
+    image: local/jansky_dev
     environment:
       - COVERAGE_FILE=/tmp/.coverage
     volumes:
       - .:/app
 
-  # Processor container for a prod-like processor.
-  processor:
+  # Processor container for a prod-like Jansky.
+  jansky:
     extends:
       service: base
     environment:
-      - PROCESSOR_ENV=${PROCESSOR_ENV}
-    command: ./bin/run_processor.sh
+      - JANSKY_ENV=${JANSKY_ENV}
+    command: ./bin/run_jansky.sh
 
   # https://hub.docker.com/r/kamon/grafana_graphite/
   # username: admin, password: admin

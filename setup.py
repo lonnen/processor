@@ -38,14 +38,14 @@ def find_install_requires():
 
 
 setup(
-    name="processor",
-    version="0.0.1",
+    name="jansky",
+    version="0.1.0",
     author="mozilla socorro team and friends",
     description="the socorro crash processor",
     long_description=read("README.md"),
     license="MPL-2",
     packages=[
-        'processor',
+        'jansky',
     ],
     install_requires=find_install_requires(),
     include_package_data=True,

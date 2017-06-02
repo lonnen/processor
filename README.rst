@@ -1,12 +1,12 @@
-============================================
-Processor: A Breakpad crash report processor
-============================================
+=========================================
+Jansky: A Breakpad crash report processor
+=========================================
 
 Built to accept crashes collected by `Antenna
 <https://github.com/mozilla/antenna>`_, applies JSON/dump pairs to the
-stackwalk_server application, parses the output, and records the results. The
-processor, coupled with stackwalk_server, is computationally intensive. Multiple
-instances of the processor can be run simultaneously.
+stackwalk_server application, parses the output, and records the results.
+Jansky, coupled with stackwalk_server, is computationally intensive. Multiple
+instances of Jansky can be run simultaneously.
 
 :Free software: Mozilla Public License version 2.0
 :Documentation: https://processor.readthedocs.io/
@@ -18,7 +18,7 @@ Quickstart
 
 
 This is a quickstart that uses Docker so you can see how the pieces work. Docker
-is also used for local development of Processor.
+is also used for local development of Jansky.
 
 For more comprehensive documentation or instructions on how to set this up in
 production, see docs_.
@@ -27,7 +27,7 @@ production, see docs_.
 
    .. code-block:: shell
 
-      $ git clone https://github.com/mozilla/processor
+      $ git clone https://github.com/mozilla/jansky/
 
 
 2. `Install docker 1.10.0+ <https://docs.docker.com/engine/installation/>`_ and
@@ -67,18 +67,18 @@ production, see docs_.
       You'll need to set up a Graphite datasource pointed to
       ``http://localhost:8000``.
 
-   4. Shutting down the processor:
+   4. Shutting down Jansky:
 
-      When you're done with the Processor process, hit CTRL-C to gracefully kill
+      When you're done with the Jansky process, hit CTRL-C to gracefully kill
       the docker container.
 
 
-   If you want to run with a different Processor configuration, put the
-   configuration in an env file and then set ``PROCESSOR_ENV``. For example:
+   If you want to run with a different Jansky configuration, put the
+   configuration in an env file and then set ``JANSKY_ENV``. For example:
 
    .. code-block:: shell
 
-      $ PROCESSOR_ENV=my.env make run
+      $ JANSKY_ENV=my.env make run
 
 
    See ``prod.env`` and the docs_ for configuration options.
@@ -107,7 +107,7 @@ production, see docs_.
    We're using py.test_ for a test harness and test discovery.
 
 
-For more details on running Processor or hacking on Processor, see the docs_.
+For more details on running Jansky or hacking on Jansky, see the docs_.
 
 .. _py.test: http://pytest.org/
-.. _docs: https://processor.readthedocs.io/
+.. _docs: https://jansky.readthedocs.io/

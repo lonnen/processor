@@ -4,7 +4,7 @@
 
 import pytest
 
-from processor.rules.mozilla_transform_rules import (
+from jansky.rules.mozilla_transform_rules import (
     AddonsRule,
     DatesAndTimesRule,
     EnvironmentRule,
@@ -22,7 +22,7 @@ from processor.rules.mozilla_transform_rules import (
     UserDataRule,
     Winsock_LSPRule
 )
-from processor.util import (
+from jansky.util import (
     datetime_from_isodate_string
 )
 

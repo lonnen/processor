@@ -4,7 +4,7 @@
 
 import pytest
 
-from processor.rule import (
+from jansky.rule import (
     CreateMetadata,
     Identity,
     Introspector,
@@ -55,11 +55,11 @@ class TestIntrospectorRule:
 
     def test_happy_path(self, loggingmock):
         __ = 1
-        with loggingmock(['processor.rule']) as lm:
+        with loggingmock(['jansky.rule']) as lm:
             r = Introspector()
             r(__, __, __, __)
             assert lm.has_record(
-                name='processor.rule',
+                name='jansky.rule',
                 levelname='INFO',
                 msg_contains='(1, 1, 1, 1)'
             )

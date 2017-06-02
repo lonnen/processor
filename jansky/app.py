@@ -12,13 +12,13 @@ from everett.manager import ConfigManager, ConfigEnvFileEnv, ConfigOSEnv, ListOf
 from everett.component import ConfigOptions, RequiredConfigMixin
 import markus
 
-from processor.rule import UUIDCorrection, CreateMetadata, SaveMetadata
-from processor.rules.general_transform_rules import (
+from jansky.rule import UUIDCorrection, CreateMetadata, SaveMetadata
+from jansky.rules.general_transform_rules import (
     CPUInfoRule,
     IdentifierRule,
     OSInfoRule
 )
-from processor.rules.mozilla_transform_rules import (
+from jansky.rules.mozilla_transform_rules import (
     AddonsRule,
     DatesAndTimesRule,
     EnvironmentRule,
@@ -80,7 +80,7 @@ def setup_logging(app_config):
             'level': 'WARNING',
         },
         'loggers': {
-            'processor': {
+            'jansky': {
                 'propagate': False,
                 'handlers': ['mozlog'],
                 'level': app_config('logging_level'),
@@ -184,10 +184,10 @@ class AppConfig(RequiredConfigMixin):
     )
     required_config.add_option(
         'metrics_class',
-        default='processor.metrics.LoggingMetrics',
+        default='jansky.metrics.LoggingMetrics',
         doc=(
             'Comma-separated list of metrics backends to use. Possible options: '
-            '"processor.metrics.LoggingMetrics" and "processor.metrics.DatadogMetrics"',
+            '"jansky.metrics.LoggingMetrics" and "jansky.metrics.DatadogMetrics"',
         ),
         parser=ListOf(parse_class)
     )
