@@ -1,4 +1,4 @@
-PROCESSOR_ENV ?= "prod.env"
+JANSKY_ENV ?= "jansky.env"
 DC := $(shell which docker-compose)
 
 default:
@@ -26,7 +26,7 @@ build:
 	touch .docker-build
 
 run: .docker-build
-	JANSKY_ENV=${JANSKY_ENV} ${DC} up processor
+	JANSKY_ENV=${JANSKY_ENV} ${DC} up jansky
 
 shell: .docker-build
 	JANSKY_ENV=empty.env ${DC} run --service-ports base bash
@@ -54,13 +54,13 @@ clean:
 	-rm -rf fakes3_root/
 
 lint: .docker-build
-	JANSKY_ENV=empty.env ${DC} run base flake8 --statistics processor tests/unittest/
+	JANSKY_ENV=empty.env ${DC} run base flake8 --statistics jansky tests/unittest/
 
 test: .docker-build
 	JANSKY_ENV=empty.env ${DC} run base py.test
 
 test-coverage: .docker-build
-	JANSKY_ENV=empty.env ${DC} run base py.test --cov=processor --cov-report term-missing
+	JANSKY_ENV=empty.env ${DC} run base py.test --cov=jansky --cov-report term-missing
 
 docs: .docker-build
 	JANSKY_ENV=empty.env ${DC} run base ./bin/build_docs.sh
