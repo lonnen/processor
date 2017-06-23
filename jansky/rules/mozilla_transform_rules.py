@@ -199,8 +199,8 @@ class FennecBetaError20150430(Rule):
 
     def predicate(self, crash_id, raw_crash, dumps, processed_crash):
         return (raw_crash['ProductName'].startswith('Fennec') and
-            raw_crash['BuildID'] == '20150427090529' and
-            raw_crash['ReleaseChannel'] == 'release')
+                raw_crash['BuildID'] == '20150427090529' and
+                raw_crash['ReleaseChannel'] == 'release')
 
     def action(self, crash_id, raw_crash, dumps, processed_crash):
         raw_crash['ReleaseChannel'] = 'beta'
@@ -259,7 +259,7 @@ class FlashVersionRule(Rule):
     )
 
     def _get_flash_version(self, filename=None, version=None,
-        debug_id=None, **kwargs):
+                           debug_id=None, **kwargs):
         """If (we recognize this module as Flash and figure out a version):
         Returns version; else (None or '')"""
 
@@ -369,8 +369,8 @@ class ProductRewrite(Rule):
         }
 
     def predicate(self, crash_id, raw_crash, dumps, processed_crash):
-        return ('ProductID' in raw_crash
-            and raw_crash['ProductID'] in self.product_id_map)
+        return ('ProductID' in raw_crash and
+                raw_crash['ProductID'] in self.product_id_map)
 
     def action(self, crash_id, raw_crash, dumps, processed_crash):
         product_id = raw_crash['ProductID']

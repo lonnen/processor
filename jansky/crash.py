@@ -26,6 +26,7 @@ Usage::
 
 """
 
+
 class Crash:
     def __init__(self, crash_id):
         """construct a class object with a given crash_id and initialize
@@ -74,8 +75,7 @@ class Crash:
 
         """
         try:
-            rule(self.crash_id, self.raw_crash, self.dumps,
-                self.processed_crash)
+            rule(self.crash_id, self.raw_crash, self.dumps, self.processed_crash)
         except Exception as x:
             logger.warning(
                 'Error while processing %s: %s',
@@ -89,7 +89,7 @@ class Crash:
 
         return self
 
-    def pipeline(self, *args, supress_errors=False):
+    def pipeline(self, *args, suppress_errors=False):
         """sugar for applying multiple transformations
 
         :arg Callables *args: an arbitrary number of callable rules to
@@ -99,7 +99,7 @@ class Crash:
         errors
         """
         for arg in args:
-            self.transform(arg, supress_errors=supress_errors)
+            self.transform(arg, supress_errors=suppress_errors)
         return self
 
     def fetch(self, supress_errors=False):

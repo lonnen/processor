@@ -2,11 +2,13 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from collections import namedtuple
 from functools import wraps
 import logging
 import logging.config
 from pathlib import Path
 import socket
+import time
 
 from everett.manager import ConfigManager, ConfigEnvFileEnv, ConfigOSEnv, ListOf, parse_class
 from everett.component import ConfigOptions, RequiredConfigMixin
@@ -200,17 +202,6 @@ class AppConfig(RequiredConfigMixin):
             'will be used instead.'
         )
     )
-    required_config.add_option(
-        'host_id',
-        default='',
-        doc=(
-            'Identifier for the host that is running Antenna. This identifies this Antenna '
-            'instance in the logs and makes it easier to correlate Antenna logs with '
-            'other data. For example, the value could be a public hostname, an instance id, '
-            'or something like that. If you do not set this, then socket.gethostname() is '
-            'used instead.'
-        )
-    )
 
     def __init__(self, config):
         self.config_manager = config
@@ -220,12 +211,58 @@ class AppConfig(RequiredConfigMixin):
         return self.config(key)
 
 
+WorkItem = namedtuple('WorkItem', ['context', 'crash_id'])
+
+
+class Worklist:
+    """Generates crash ids to work on
+
+    If it's exhausted, by default it'll sleep for ``sleep_when_exhausted`` seconds and then try
+    again. If ``sleep_when_exhausted`` is <= 0, then it'll return.
+
+    """
+    def __init__(self, generator, sleep_when_exhausted=2):
+        self.generator = generator
+        self.sleep_when_exhausted = sleep_when_exhausted
+
+    def __iter__(self):
+        """Generates crash ids and completers"""
+        while True:
+            try:
+                workitem = self.generator.get_next()
+
+            except Exception:
+                # FIXME(willkg): the generator should handle all errors and throw a serviceerror for
+                # the errors it handled. anything else should be raised as a "real error" here.
+                pass
+
+            if workitem is not None:
+                yield workitem
+
+            elif self.sleep_when_exhausted > 0:
+                time.sleep(self.sleep_when_exhausted)
+
+            else:
+                return
+
+
 class Processor:
     def __init__(self, config):
         self.config = config
 
+        self.generator = None  # FIXME(willkg): this should be rabbitmq or cmd args or whatever.
+        self.worklist = Worklist(self.generator)
+
+    def run(self):
+        # FIXME(willkg): fix this loop. add exception handling to it.
+        for workitem in self.worklist:
+            logger.info('Processing %s', workitem.crash_id)
+            was_completed = self.run_one(workitem.crash_id)
+            if was_completed:
+                workitem.context.ack()
+
     # FIXME(willkg): this is all prototypey filler
-    def main(self, crash_id):
+    def run_one(self, crash_id):
         # while True:
         try:
             Crash(crash_id).fetch().pipeline(
