@@ -55,6 +55,7 @@ clean:
 
 lint: .docker-build
 	JANSKY_ENV=empty.env ${DC} run base flake8 --statistics jansky tests/unittest/
+	JANSKY_ENV=empty.env ${DC} run base bandit -r jansky/
 
 test: .docker-build
 	JANSKY_ENV=empty.env ${DC} run base py.test

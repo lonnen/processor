@@ -37,7 +37,7 @@ services:
       service: base
     environment:
       - JANSKY_ENV=${JANSKY_ENV}
-    command: ./bin/run_jansky.sh
+    command: ./bin/run_jansky_dev.sh
 
   # https://hub.docker.com/r/kamon/grafana_graphite/
   # username: admin, password: admin

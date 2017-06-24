@@ -3,10 +3,16 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import datetime
+import json
+import logging
+from pathlib import Path
 import re
 import uuid
 
 import isodate
+
+
+logger = logging.getLogger(__name__)
 
 
 UTC = isodate.UTC
@@ -204,3 +210,22 @@ def utc_now():
 
     """
     return datetime.datetime.now(UTC)
+
+
+def get_version_info(basedir):
+    """Given a basedir, retrieves version information for this deploy
+
+    :arg str basedir: the path of the base directory where ``version.json``
+        exists
+
+    :returns: version info as a dict or an empty dict
+
+    """
+    try:
+        path = Path(basedir) / 'version.json'
+        with open(str(path), 'r') as fp:
+            commit_info = json.loads(fp.read().strip())
+    except (IOError, OSError):
+        logger.error('Exception thrown when retrieving version.json', exc_info=True)
+        commit_info = {}
+    return commit_info
