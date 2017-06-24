@@ -19,9 +19,11 @@ COPY . /app/
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PORT 8000
+ENV HONCHO_CONCURRENCY 4
 
 USER app
 EXPOSE $PORT
 
-# FIXME(willkg): Set CMD.
-# https://github.com/mozilla-services/Dockerflow#dockerfile-requirements
+CMD honcho \
+    start \
+    --concurrency=processor=$HONCHO_CONCURRENCY

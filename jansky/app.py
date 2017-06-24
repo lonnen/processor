@@ -6,8 +6,10 @@ from collections import namedtuple
 from functools import wraps
 import logging
 import logging.config
+import os
 from pathlib import Path
 import socket
+import sys
 import time
 
 from everett.manager import ConfigManager, ConfigEnvFileEnv, ConfigOSEnv, ListOf, parse_class
@@ -36,6 +38,10 @@ from jansky.rules.mozilla_transform_rules import (
     UserDataRule,
     Winsock_LSPRule
 )
+from jansky.sentry import (
+    set_sentry_client,
+    setup_sentry_logging,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -43,38 +49,24 @@ logger = logging.getLogger(__name__)
 
 def setup_logging(app_config):
     """Initializes Python logging configuration"""
-    host_id = app_config('host_id') or socket.gethostname()
-
-    class AddHostID(logging.Filter):
-        def filter(self, record):
-            record.host_id = host_id
-            return True
-
     dc = {
         'version': 1,
         'disable_existing_loggers': True,
-        'filters': {
-            'add_hostid': {
-                '()': AddHostID
-            }
-        },
         'formatters': {
             'mozlog': {
                 '()': 'dockerflow.logging.JsonLogFormatter',
-                'logger_name': 'antenna'
+                'logger_name': 'jansky'
             },
         },
         'handlers': {
             'console': {
                 'level': 'DEBUG',
                 'class': 'logging.StreamHandler',
-                'filters': ['add_hostid'],
             },
             'mozlog': {
                 'level': 'DEBUG',
                 'class': 'logging.StreamHandler',
                 'formatter': 'mozlog',
-                'filters': ['add_hostid'],
             },
         },
         'root': {
@@ -108,18 +100,6 @@ def setup_metrics(metrics_classes, config, logger=None):
         markus_configuration.append(backend.to_markus())
 
     markus.configure(markus_configuration)
-
-
-def log_unhandled(fun):
-    @wraps(fun)
-    def _log_unhandled(*args, **kwargs):
-        try:
-            return fun(*args, **kwargs)
-        except Exception:
-            logger.exception('UNHANDLED EXCEPTION!')
-            raise
-
-    return _log_unhandled
 
 
 def log_config(logger, component):
@@ -338,3 +318,44 @@ class Processor:
         finally:
             # TODO: clean up any temp files, dumps, etc
             pass
+
+
+def main(args, config=None):
+    if config is None:
+        config = ConfigManager(
+            environments=[
+                # Pull configuration from env file specified as JANSKY_ENV
+                ConfigEnvFileEnv([os.environ.get('JANSKY_ENV')]),
+                # Pull configuration from environment variables
+                ConfigOSEnv()
+            ],
+            doc=(
+                'For configuration help, see '
+                'https://jansky.readthedocs.io/en/latest/configuration.html'
+            )
+        )
+
+    app_config = AppConfig(config)
+
+    # Set a Sentry client if we're so configured
+    set_sentry_client(app_config('secret_sentry_dsn'), app_config('basedir'))
+
+    # Set up logging and sentry first, so we have something to log to. Then
+    # build and log everything else.
+    setup_logging(app_config)
+
+    # Log application configuration
+    log_config(logger, app_config)
+
+    # Set up Sentry exception logger if we're so configured
+    setup_sentry_logging()
+
+    # Set up metrics
+    setup_metrics(app_config('metrics_class'), config, logger)
+
+    # FIXME(willkg): run processor
+    print('Nothing to do, yet.')
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))

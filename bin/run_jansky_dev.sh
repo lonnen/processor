@@ -6,6 +6,9 @@
 
 set -e
 
-# FIXME(willkg): implement this when there's something to run
+HONCHO_CONCURRENCY=1
 
-echo "This doesn't do anything, yet."
+echo "Running jansky dev..."
+honcho \
+    start \
+    --concurrency=processor=${HONCHO_CONCURRENCY}
