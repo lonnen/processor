@@ -9,7 +9,7 @@ from jansky.rules.mozilla_transform_rules import (
     DatesAndTimesRule,
     EnvironmentRule,
     ESRVersionRewrite,
-    ExploitablityRule,
+    ExploitabilityRule,
     FlashVersionRule,
     JavaProcessRule,
     PluginContentURL,
@@ -324,10 +324,10 @@ class TestESRVersionRewrite:
         )
 
 
-class TestExploitablityRule:
+class TestExploitabilityRule:
 
     def test_everything_we_hoped_for(self, processed_crash):
-        ExploitablityRule()(_, _, _, processed_crash)
+        ExploitabilityRule()(_, _, _, processed_crash)
 
         assert processed_crash['exploitability'] == 'high'
 
@@ -338,7 +338,7 @@ class TestExploitablityRule:
             }
         }
 
-        ExploitablityRule()(_, _, _, processed_crash)
+        ExploitabilityRule()(_, _, _, processed_crash)
 
         assert processed_crash['exploitability'] == 'unknown'
 

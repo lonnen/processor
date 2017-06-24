@@ -176,7 +176,7 @@ class ESRVersionRewrite(Rule):
                 '"Version" missing from esr release raw_crash')
 
 
-class ExploitablityRule(Rule):
+class ExploitabilityRule(Rule):
     '''lifts exploitability out of the dump and into top-level fields
     '''
 
