@@ -10,7 +10,7 @@ import time
 from sys import maxsize
 
 
-from jansky.util import get_date_from_crash_id, datetime_from_isodate_string, utc_now
+from jansky.util import get_date_from_crash_id, datetime_from_isodate_string
 from jansky.rule import Rule
 
 from urllib.parse import unquote_plus

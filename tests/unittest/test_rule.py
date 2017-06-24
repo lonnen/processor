@@ -39,7 +39,7 @@ class BadTransformRule(Rule):
     '''
 
     def action(self, crash_id, raw_crash, dumps, processed_crash):
-        raw_crash = 1 / 0
+        1 / 0
 
 
 class TestIdentityRule:
@@ -90,8 +90,10 @@ class TestCreateMetadata:
         CreateMetadata()(_, _, _, processed_crash)
         metadata = processed_crash['metadata']
         assert 'original_processor_notes' in metadata
-        assert (metadata['processor_notes'] ==
-            ['earlier processing: Unknown Date'])
+        assert (
+            metadata['processor_notes'] ==
+            ['earlier processing: Unknown Date']
+        )
 
 
 class TestSaveMetadata:
@@ -121,7 +123,9 @@ class TestSaveMetadata:
 
         SaveMetadata()(_, _, _, processed_crash)
         assert 'metadata' not in processed_crash
-        assert (processed_crash.get('processor_notes') ==
-            'dwight; wilma; Processor2015; earlier processing: Unknown Date')
+        assert (
+            processed_crash.get('processor_notes') ==
+            'dwight; wilma; Processor2015; earlier processing: Unknown Date'
+        )
         assert processed_crash.get('completed_datetime', None)  # TODO: freezegun
         assert processed_crash.get('success')

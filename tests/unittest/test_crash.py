@@ -6,7 +6,7 @@
 import pytest
 
 from jansky.crash import Crash
-from jansky.rule import Identity, Introspector, Rule
+from jansky.rule import Introspector, Rule
 
 from tests.unittest.test_rule import BadTransformRule
 
@@ -16,7 +16,7 @@ class TestCrash:
     def test_fetch_crash_info(self):
         crash = Crash('AAAAAAAA-1111-4242-FFFB-094F01B8FF11')
         assert crash.crash_id == 'AAAAAAAA-1111-4242-FFFB-094F01B8FF11'
-        crash.fetch() # TODO mock this out
+        crash.fetch()  # TODO mock this out
 
     def test_transform_modifies_state(self):
         crash = Crash('AAAAAAAA-1111-4242-FFFB-094F01B8FF11')
@@ -41,6 +41,7 @@ class TestCrash:
             Renamer(''),
             Introspector()
         )
+
 
 class Renamer(Rule):
 
