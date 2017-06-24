@@ -9,7 +9,7 @@ from jansky.rules.mozilla_transform_rules import (
     DatesAndTimesRule,
     EnvironmentRule,
     ESRVersionRewrite,
-    ExploitablityRule,
+    ExploitabilityRule,
     FlashVersionRule,
     JavaProcessRule,
     PluginContentURL,
@@ -48,7 +48,6 @@ class TestAddonsRule:
         ])
         assert processed_crash['addons_checked']
 
-
     def test_action_colon_in_addon_version(self, raw_crash, processed_crash):
         raw_crash['Add-ons'] = 'adblockpopups@jessehakanen.net:0:3:1'
         raw_crash['EMCheckCompatibility'] = 'Nope'
@@ -59,7 +58,6 @@ class TestAddonsRule:
             ('adblockpopups@jessehakanen.net', '0:3:1'),
         ])
         assert not processed_crash['addons_checked']
-
 
     def test_action_addon_is_nonsense(self, raw_crash, processed_crash):
         raw_crash['Add-ons'] = 'naoenut813teq;mz;<[`19ntaotannn8999anxse `'
@@ -77,13 +75,19 @@ class TestDatesAndTimesRule:
     def test_everything_we_hoped_for(self, raw_crash, processed_crash):
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
-        assert (processed_crash['submitted_timestamp'] ==
-            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
-        assert (processed_crash['date_processed'] ==
-            processed_crash['submitted_timestamp'])
+        assert (
+            processed_crash['submitted_timestamp'] ==
+            datetime_from_isodate_string(raw_crash['submitted_timestamp'])
+        )
+        assert (
+            processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp']
+        )
         assert processed_crash['crash_time'] == 1336519554
-        assert (processed_crash['client_crash_date'] ==
-            datetime_from_isodate_string('2012-05-08 23:25:54+00:00'))
+        assert (
+            processed_crash['client_crash_date'] ==
+            datetime_from_isodate_string('2012-05-08 23:25:54+00:00')
+        )
         assert processed_crash['install_age'] == 1079662
         assert processed_crash['uptime'] == 20116
         assert processed_crash['last_crash'] == 86985
@@ -93,18 +97,26 @@ class TestDatesAndTimesRule:
 
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
-        assert (processed_crash['submitted_timestamp'] ==
-            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
-        assert (processed_crash['date_processed'] ==
-            processed_crash['submitted_timestamp'])
+        assert (
+            processed_crash['submitted_timestamp'] ==
+            datetime_from_isodate_string(raw_crash['submitted_timestamp'])
+        )
+        assert (
+            processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp']
+        )
         assert processed_crash['crash_time'] == 1336519554
-        assert (processed_crash['client_crash_date'] ==
-            datetime_from_isodate_string('2012-05-08 23:25:54+00:00'))
+        assert (
+            processed_crash['client_crash_date'] ==
+            datetime_from_isodate_string('2012-05-08 23:25:54+00:00')
+        )
         assert processed_crash['install_age'] == 1079662
         assert processed_crash['uptime'] == 20116
         assert processed_crash['last_crash'] == 86985
-        assert (processed_crash['metadata']['processor_notes'] ==
-            ['non-integer value of "timestamp"'])
+        assert (
+            processed_crash['metadata']['processor_notes'] ==
+            ['non-integer value of "timestamp"']
+        )
 
     def test_bad_timestamp_and_no_crash_time(self, raw_crash, processed_crash):
         raw_crash['timestamp'] = 'hi there'
@@ -112,23 +124,29 @@ class TestDatesAndTimesRule:
 
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
-        assert (processed_crash['submitted_timestamp'] ==
-            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
-        assert (processed_crash['date_processed'] ==
-            processed_crash['submitted_timestamp'])
+        assert (
+            processed_crash['submitted_timestamp'] ==
+            datetime_from_isodate_string(raw_crash['submitted_timestamp'])
+        )
+        assert (
+            processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp']
+        )
         assert processed_crash['crash_time'] == 0
-        assert (processed_crash['client_crash_date'] ==
-            datetime_from_isodate_string('1970-01-01 00:00:00+00:00'))
+        assert (
+            processed_crash['client_crash_date'] ==
+            datetime_from_isodate_string('1970-01-01 00:00:00+00:00')
+        )
         assert processed_crash['install_age'] == -1335439892
         assert processed_crash['uptime'] == 0
         assert processed_crash['last_crash'] == 86985
-        assert (processed_crash['metadata']['processor_notes'] ==
+        assert (
+            processed_crash['metadata']['processor_notes'] ==
             [
                 'non-integer value of "timestamp"',
                 'WARNING: raw_crash missing CrashTime'
-            ])
-
-
+            ]
+        )
 
     def test_no_startup_time_bad_timestamp(self, raw_crash, processed_crash):
         raw_crash['timestamp'] = 'hi there'
@@ -136,112 +154,148 @@ class TestDatesAndTimesRule:
 
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
-        assert (processed_crash['submitted_timestamp'] ==
-            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
-        assert (processed_crash['date_processed'] ==
-            processed_crash['submitted_timestamp'])
+        assert (
+            processed_crash['submitted_timestamp'] ==
+            datetime_from_isodate_string(raw_crash['submitted_timestamp'])
+        )
+        assert (
+            processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp']
+        )
         assert processed_crash['crash_time'] == 1336519554
-        assert (processed_crash['client_crash_date'] ==
-            datetime_from_isodate_string('2012-05-08 23:25:54+00:00'))
+        assert (
+            processed_crash['client_crash_date'] ==
+            datetime_from_isodate_string('2012-05-08 23:25:54+00:00')
+        )
         assert processed_crash['install_age'] == 1079662
         assert processed_crash['uptime'] == 0
         assert processed_crash['last_crash'] == 86985
-        assert (processed_crash['metadata']['processor_notes'] ==
+        assert (
+            processed_crash['metadata']['processor_notes'] ==
             [
                 'non-integer value of "timestamp"',
-            ])
-
+            ]
+        )
 
     def test_no_startup_time(self, raw_crash, processed_crash):
         del raw_crash['StartupTime']
 
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
-        assert (processed_crash['submitted_timestamp'] ==
-            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
-        assert (processed_crash['date_processed'] ==
-            processed_crash['submitted_timestamp'])
+        assert (
+            processed_crash['submitted_timestamp'] ==
+            datetime_from_isodate_string(raw_crash['submitted_timestamp'])
+        )
+        assert (
+            processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp']
+        )
         assert processed_crash['crash_time'] == 1336519554
-        assert (processed_crash['client_crash_date'] ==
-            datetime_from_isodate_string('2012-05-08 23:25:54+00:00'))
+        assert (
+            processed_crash['client_crash_date'] ==
+            datetime_from_isodate_string('2012-05-08 23:25:54+00:00')
+        )
         assert processed_crash['install_age'] == 1079662
         assert processed_crash['uptime'] == 0
         assert processed_crash['last_crash'] == 86985
         assert (processed_crash['metadata']['processor_notes'] == [])
-
 
     def test_bad_startup_time(self, raw_crash, processed_crash):
         raw_crash['StartupTime'] = 'feed the goats'
 
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
-        assert (processed_crash['submitted_timestamp'] ==
-            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
-        assert (processed_crash['date_processed'] ==
-            processed_crash['submitted_timestamp'])
+        assert (
+            processed_crash['submitted_timestamp'] ==
+            datetime_from_isodate_string(raw_crash['submitted_timestamp'])
+        )
+        assert (
+            processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp']
+        )
         assert processed_crash['crash_time'] == 1336519554
-        assert (processed_crash['client_crash_date'] ==
-            datetime_from_isodate_string('2012-05-08 23:25:54+00:00'))
+        assert (
+            processed_crash['client_crash_date'] ==
+            datetime_from_isodate_string('2012-05-08 23:25:54+00:00')
+        )
         assert processed_crash['install_age'] == 1079662
         assert processed_crash['uptime'] == 1336519554
         assert processed_crash['last_crash'] == 86985
-        assert (processed_crash['metadata']['processor_notes'] ==
+        assert (
+            processed_crash['metadata']['processor_notes'] ==
             [
                 'non-integer value of "StartupTime"',
-            ])
-
+            ]
+        )
 
     def test_bad_install_time(self, raw_crash, processed_crash):
         raw_crash['InstallTime'] = 'feed the goats'
 
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
-        assert (processed_crash['submitted_timestamp'] ==
-            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
-        assert (processed_crash['date_processed'] ==
-            processed_crash['submitted_timestamp'])
+        assert (
+            processed_crash['submitted_timestamp'] ==
+            datetime_from_isodate_string(raw_crash['submitted_timestamp'])
+        )
+        assert (
+            processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp']
+        )
         assert processed_crash['crash_time'] == 1336519554
-        assert (processed_crash['client_crash_date'] ==
-            datetime_from_isodate_string('2012-05-08 23:25:54+00:00'))
+        assert (
+            processed_crash['client_crash_date'] ==
+            datetime_from_isodate_string('2012-05-08 23:25:54+00:00')
+        )
         assert processed_crash['install_age'] == 1336519554
         assert processed_crash['uptime'] == 20116
         assert processed_crash['last_crash'] == 86985
-        assert (processed_crash['metadata']['processor_notes'] ==
+        assert (
+            processed_crash['metadata']['processor_notes'] ==
             [
                 'non-integer value of "InstallTime"',
-            ])
-
+            ]
+        )
 
     def test_bad_seconds_since_last_crash(self, raw_crash, processed_crash):
         raw_crash['SecondsSinceLastCrash'] = 'feed the goats'
 
         DatesAndTimesRule()(_, raw_crash, _, processed_crash)
 
-        assert (processed_crash['submitted_timestamp'] ==
-            datetime_from_isodate_string(raw_crash['submitted_timestamp']))
-        assert (processed_crash['date_processed'] ==
-            processed_crash['submitted_timestamp'])
+        assert (
+            processed_crash['submitted_timestamp'] ==
+            datetime_from_isodate_string(raw_crash['submitted_timestamp'])
+        )
+        assert (
+            processed_crash['date_processed'] ==
+            processed_crash['submitted_timestamp']
+        )
         assert processed_crash['crash_time'] == 1336519554
-        assert (processed_crash['client_crash_date'] ==
-            datetime_from_isodate_string('2012-05-08 23:25:54+00:00'))
+        assert (
+            processed_crash['client_crash_date'] ==
+            datetime_from_isodate_string('2012-05-08 23:25:54+00:00')
+        )
         assert processed_crash['install_age'] == 1079662
         assert processed_crash['uptime'] == 20116
-        assert processed_crash['last_crash'] == None
-        assert (processed_crash['metadata']['processor_notes'] ==
+        assert processed_crash['last_crash'] is None
+        assert (
+            processed_crash['metadata']['processor_notes'] ==
             [
                 'non-integer value of "SecondsSinceLastCrash"',
-            ])
+            ]
+        )
 
 
 class TestEnvironmentRule:
 
     def test_everything_we_hoped_for(self, raw_crash, processed_crash):
         EnvironmentRule()(_, raw_crash, _, processed_crash)
-        assert (processed_crash['app_notes'] ==
+        assert (
+            processed_crash['app_notes'] ==
             "AdapterVendorID: 0x1002, AdapterDeviceID: 0x7280, "
             "AdapterSubsysID: 01821043, "
             "AdapterDriverVersion: 8.593.100.0\nD3D10 Layers? D3D10 "
-            "Layers- D3D9 Layers? D3D9 Layers- ")
+            "Layers- D3D9 Layers? D3D9 Layers- "
+        )
 
 
 class TestESRVersionRewrite:
@@ -252,12 +306,10 @@ class TestESRVersionRewrite:
 
         assert raw_crash['Version'] == '12.0esr'
 
-
     def test_wrong_crash(self, raw_crash):
         ESRVersionRewrite()(_, raw_crash, _, _)
 
-        assert raw_crash['Version'] == '12.0' # unchanged
-
+        assert raw_crash['Version'] == '12.0'  # unchanged
 
     def test_this_is_really_broken(self, raw_crash):
         raw_crash['ReleaseChannel'] = 'esr'
@@ -266,14 +318,16 @@ class TestESRVersionRewrite:
         with pytest.raises(KeyError) as failure:
             ESRVersionRewrite()(_, raw_crash, _, _)
 
-        assert (failure.value.args[0] ==
-            '"Version" missing from esr release raw_crash')
+        assert (
+            failure.value.args[0] ==
+            '"Version" missing from esr release raw_crash'
+        )
 
 
-class TestExploitablityRule:
+class TestExploitabilityRule:
 
     def test_everything_we_hoped_for(self, processed_crash):
-        ExploitablityRule()(_, _, _, processed_crash)
+        ExploitabilityRule()(_, _, _, processed_crash)
 
         assert processed_crash['exploitability'] == 'high'
 
@@ -284,7 +338,7 @@ class TestExploitablityRule:
             }
         }
 
-        ExploitablityRule()(_, _, _, processed_crash)
+        ExploitabilityRule()(_, _, _, processed_crash)
 
         assert processed_crash['exploitability'] == 'unknown'
 
@@ -316,8 +370,6 @@ class TestFlashVersionRule:
                 version=params[1],
                 debug_id=params[2]) == params[3])
 
-
-
     def test_everything_we_hoped_for(self, processed_crash):
         FlashVersionRule()(_, _, _, processed_crash)
 
@@ -332,16 +384,17 @@ class TestJavaProcessRule:
         JavaProcessRule()(_, raw_crash, _, processed_crash)
 
         assert 'java_stack_trace' in processed_crash
-        assert (processed_crash['java_stack_trace'] ==
-            raw_crash['JavaStackTrace'])
-
+        assert (
+            processed_crash['java_stack_trace'] ==
+            raw_crash['JavaStackTrace']
+        )
 
     def test_missing_stuff(self, raw_crash, processed_crash):
         # no raw_crash java stack trace
 
         JavaProcessRule()(_, raw_crash, _, processed_crash)
 
-        assert processed_crash['java_stack_trace'] == None
+        assert processed_crash['java_stack_trace'] is None
 
 
 class TestPluginContentURL:
@@ -353,12 +406,11 @@ class TestPluginContentURL:
 
         assert raw_crash['URL'] == 'http://mozilla.com'
 
-
     def test_wrong_crash(self, raw_crash):
         raw_crash['URL'] = 'http://google.com'
         PluginContentURL()(_, raw_crash, _, _)
 
-        assert raw_crash['URL'] == 'http://google.com' # unchanged
+        assert raw_crash['URL'] == 'http://google.com'  # unchanged
 
 
 class TestPluginRule:
@@ -373,14 +425,15 @@ class TestPluginRule:
 
         PluginRule()(_, raw_crash, _, processed_crash)
 
-        assert (processed_crash['hangid'] ==
-            'fake-00000000-0000-0000-0000-000002140504')
+        assert (
+            processed_crash['hangid'] ==
+            'fake-00000000-0000-0000-0000-000002140504'
+        )
         assert processed_crash['hang_type'] == -1
         assert processed_crash['process_type'] == 'plugin'
         assert processed_crash['PluginFilename'] == 'x.exe'
         assert processed_crash['PluginName'] == 'X'
         assert processed_crash['PluginVersion'] == '0.0'
-
 
     def test_browser_hang(self, raw_crash, processed_crash):
         raw_crash['Hang'] = 1
@@ -388,18 +441,17 @@ class TestPluginRule:
 
         PluginRule()(_, raw_crash, _, processed_crash)
 
-        assert processed_crash['hangid'] == None
+        assert processed_crash['hangid'] is None
         assert processed_crash['hang_type'] == 1
         assert processed_crash['process_type'] == 'browser'
         assert 'PluginFilename' not in processed_crash
         assert 'PluginName' not in processed_crash
         assert 'PluginVersion' not in processed_crash
 
-
     def test_normal_crash(self, raw_crash, processed_crash):
         PluginRule()(_, raw_crash, _, processed_crash)
 
-        assert processed_crash['hangid'] == None
+        assert processed_crash['hangid'] is None
         assert processed_crash['hang_type'] == 0
         assert 'PluginFilename' not in processed_crash
         assert 'PluginName' not in processed_crash
@@ -414,7 +466,6 @@ class TestPluginUserComment:
         PluginUserComment()(_, raw_crash, _, _)
 
         assert raw_crash['Comments'] == 'I hate it when this happens'
-
 
     def test_wrong_crash(self, raw_crash):
         raw_crash['Comments'] = 'I wrote something here, too'
@@ -434,7 +485,7 @@ class TestProductRewrite:
         raw_crash['ProductID'] = 'arbitrary-garbage-from-the-network'
         ProductRewrite()(_, raw_crash, _, _)
 
-        assert raw_crash['ProductName'] == 'Firefox' # unchanged
+        assert raw_crash['ProductName'] == 'Firefox'  # unchanged
 
 
 class TestProductRule:
@@ -444,8 +495,10 @@ class TestProductRule:
 
         assert processed_crash['product'] == 'Firefox'
         assert processed_crash['version'] == '12.0'
-        assert (processed_crash['productid'] ==
-            '{ec8030f7-c20a-464f-9b0e-13a3a9e97384}')
+        assert (
+            processed_crash['productid'] ==
+            '{ec8030f7-c20a-464f-9b0e-13a3a9e97384}'
+        )
         assert processed_crash['distributor'] == 'Mozilla'
         assert processed_crash['distributor_version'] == '12.0'
         assert processed_crash['release_channel'] == 'release'
@@ -531,8 +584,10 @@ class TestUserDataRule:
         UserDataRule()(_, raw_crash, _, processed_crash)
 
         assert processed_crash['url'] == 'http://www.mozilla.com'
-        assert (processed_crash['user_comments'] ==
-            'why did my browser crash?  #fail')
+        assert (
+            processed_crash['user_comments'] ==
+            'why did my browser crash?  #fail'
+        )
         assert processed_crash['email'] == 'noreply@mozilla.com'
         assert processed_crash['user_id'] == ''
 
@@ -549,4 +604,4 @@ class TestWinsock_LSPRule:
         del raw_crash['Winsock_LSP']
 
         Winsock_LSPRule()(_, raw_crash, _, processed_crash)
-        assert processed_crash['Winsock_LSP'] == None
+        assert processed_crash['Winsock_LSP'] is None

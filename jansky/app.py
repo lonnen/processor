@@ -3,12 +3,10 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from collections import namedtuple
-from functools import wraps
 import logging
 import logging.config
 import os
 from pathlib import Path
-import socket
 import sys
 import time
 
@@ -16,6 +14,7 @@ from everett.manager import ConfigManager, ConfigEnvFileEnv, ConfigOSEnv, ListOf
 from everett.component import ConfigOptions, RequiredConfigMixin
 import markus
 
+from jansky.crash import Crash
 from jansky.rule import UUIDCorrection, CreateMetadata, SaveMetadata
 from jansky.rules.general_transform_rules import (
     CPUInfoRule,
@@ -27,6 +26,9 @@ from jansky.rules.mozilla_transform_rules import (
     DatesAndTimesRule,
     EnvironmentRule,
     ESRVersionRewrite,
+    ExploitabilityRule,
+    FennecBetaError20150430,
+    FlashVersionRule,
     JavaProcessRule,
     PluginContentURL,
     PluginRule,
@@ -277,7 +279,7 @@ class Processor:
                 CPUInfoRule(),
                 OSInfoRule(),
                 # s.p.mozilla_transform_rules.BetaVersionRule(),
-                ExploitablityRule(),
+                ExploitabilityRule(),
                 FlashVersionRule(),
                 # s.p.mozilla_transform_rules.OSPrettyVersionRule
                 TopMostFilesRule(),

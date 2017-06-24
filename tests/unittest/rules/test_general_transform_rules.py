@@ -2,8 +2,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import pytest
-
 from jansky.rules.general_transform_rules import (
     CPUInfoRule,
     IdentifierRule,
@@ -12,8 +10,8 @@ from jansky.rules.general_transform_rules import (
 
 from tests.testlib import _
 
-class TestIdentifierRule:
 
+class TestIdentifierRule:
     def test_everything_we_hoped_for(self, raw_crash):
         processed_crash = {}
 
@@ -28,8 +26,10 @@ class TestCPUInfoRule:
     def test_everything_we_hoped_for(self, processed_crash):
         CPUInfoRule()(_, _, _, processed_crash)
 
-        assert (processed_crash['cpu_info'] ==
-            "GenuineIntel family 6 model 42 stepping 7 | 4")
+        assert (
+            processed_crash['cpu_info'] ==
+            "GenuineIntel family 6 model 42 stepping 7 | 4"
+        )
         assert processed_crash['cpu_name'] == "x86"
 
     def test_stuff_missing(self, processed_crash):
@@ -37,8 +37,10 @@ class TestCPUInfoRule:
 
         CPUInfoRule()(_, _, _, processed_crash)
 
-        assert (processed_crash['cpu_info'] ==
-            "GenuineIntel family 6 model 42 stepping 7")
+        assert (
+            processed_crash['cpu_info'] ==
+            "GenuineIntel family 6 model 42 stepping 7"
+        )
         assert processed_crash['cpu_name'] == "x86"
 
 

@@ -7,13 +7,11 @@ import datetime
 from freezegun import freeze_time
 import isodate
 import pytest
-import re
 
 from jansky.util import (
     create_crash_id,
     datestring_to_weekly_partition,
     date_to_string,
-    datetime_from_isodate_string,
     get_date_from_crash_id,
     string_to_datetime,
     utc_now
@@ -81,8 +79,7 @@ def test_string_to_datetime():
     # YY-mm-dd HH:ii:ss.S date
     date = "2001-11-30 12:34:56.123456"
     res = string_to_datetime(date)
-    assert (res == datetime.datetime(2001, 11, 30, 12, 34, 56, 123456,
-        tzinfo=UTC))
+    assert res == datetime.datetime(2001, 11, 30, 12, 34, 56, 123456, tzinfo=UTC)
 
     # Separated date
     date = ["2001-11-30", "12:34:56"]
@@ -117,14 +114,12 @@ def test_string_datetime_with_timezone():
     # similar example
     date = "2001-11-30T12:10:56-01:30"
     res = string_to_datetime(date)
-    assert (res == datetime.datetime(2001, 11, 30, 12 + 1, 10 + 30, 56,
-        tzinfo=UTC))
+    assert res == datetime.datetime(2001, 11, 30, 12 + 1, 10 + 30, 56, tzinfo=UTC)
 
     # YY-mm-dd+HH:ii:ss.S date
     date = "2001-11-30 12:34:56.123456Z"
     res = string_to_datetime(date)
-    assert (res == datetime.datetime(2001, 11, 30, 12, 34, 56, 123456,
-        tzinfo=UTC))
+    assert res == datetime.datetime(2001, 11, 30, 12, 34, 56, 123456, tzinfo=UTC)
 
     docstring = """
         * 2012-01-10T12:13:14
@@ -188,15 +183,15 @@ def test_date_to_weekly_partition_with_datetime():
         (datetime.datetime(2014, 12, 29), '20141229'),
         (datetime.datetime(2014, 12, 30), '20141229'),
         (datetime.datetime(2014, 12, 31), '20141229'),
-        (datetime.datetime(2015,  1,  1), '20141229'),
-        (datetime.datetime(2015,  1,  2), '20141229'),
-        (datetime.datetime(2015,  1,  3), '20141229'),
-        (datetime.datetime(2015,  1,  4), '20141229'),
-        (datetime.datetime(2015,  1,  5), '20150105'),
-        (datetime.datetime(2015,  1,  6), '20150105'),
-        (datetime.datetime(2015,  1,  7), '20150105'),
-        (datetime.datetime(2015,  1,  8), '20150105'),
-        (datetime.datetime(2015,  1,  9), '20150105'),
+        (datetime.datetime(2015, 1, 1), '20141229'),
+        (datetime.datetime(2015, 1, 2), '20141229'),
+        (datetime.datetime(2015, 1, 3), '20141229'),
+        (datetime.datetime(2015, 1, 4), '20141229'),
+        (datetime.datetime(2015, 1, 5), '20150105'),
+        (datetime.datetime(2015, 1, 6), '20150105'),
+        (datetime.datetime(2015, 1, 7), '20150105'),
+        (datetime.datetime(2015, 1, 8), '20150105'),
+        (datetime.datetime(2015, 1, 9), '20150105'),
     )
     for to_be_tested, expected in proposed_and_expected:
         result = datestring_to_weekly_partition(to_be_tested)
