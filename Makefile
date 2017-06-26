@@ -3,6 +3,7 @@ DC := $(shell which docker-compose)
 
 default:
 	@echo "You need to specify a subcommand."
+	@make help
 	@exit 1
 
 help:
@@ -15,6 +16,7 @@ help:
 	@echo "test          - run tests"
 	@echo "test-coverage - run tests and generate coverage report in cover/"
 	@echo "docs          - generate Sphinx HTML documentation, including API docs"
+	@echo "help          - print this menu"
 
 # Dev configuration steps
 .docker-build:
