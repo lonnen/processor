@@ -11,6 +11,7 @@ instances of Jansky can be run simultaneously.
 :Free software: Mozilla Public License version 2.0
 :Documentation: https://processor.readthedocs.io/
 :Status:        Pre-alpha
+* Community Participation Guidelines: `Guidelines <https://github.com/mozilla-services/jansky/blob/master/CODE_OF_CONDUCT.md>`_
 
 
 Quickstart
